@@ -1,7 +1,9 @@
 from constants import LINES, INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS
 from constants import R1, R2, R3, B1, B2, B3
-from utils import check_red_win, check_black_win, gen_red_moves, gen_black_moves, show_board
+from utils import check_red_win, check_black_win, show_board
+from BoardCase import BoardCase
 from Move import Move
+from MoveGenerator import MoveGenerator
 
 
 def test_check_red_win():
@@ -19,9 +21,14 @@ def test_check_black_win():
 
 
 def test_gen_red_moves():
-    moves = gen_red_moves(INIT_BOARD, RED_INIT_POSITIONS)
-    for move in moves:
-        print(move)
+    print("Test Gen Red Moves")
+    init_boardcase = BoardCase(INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, True)
+    move_generator = MoveGenerator(init_boardcase)
+    moves_and_new_boardcases = move_generator.gen_red_moves_and_boardcases()
+    for item in moves_and_new_boardcases:
+        print("Move: ", item[0])
+        show_board(item[1].board)
+    moves = [item[0] for item in moves_and_new_boardcases]
     expected_moves = [
         Move(R1, 0, 3),
         Move(R1, 0, 4),
@@ -30,16 +37,19 @@ def test_gen_red_moves():
         Move(R3, 2, 5)
     ]
     assert len(moves) == len(expected_moves)
-    i = 0
-    while i < len(moves):
+    for i in range(len(moves)):
         assert moves[i] == expected_moves[i]
-        i += 1
 
 
 def test_gen_black_moves():
-    moves = gen_black_moves(INIT_BOARD, BLACK_INIT_POSITIONS)
-    for move in moves:
-        print(move)
+    print("Test Gen Black Moves")
+    init_boardcase = BoardCase(INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, False)
+    move_generator = MoveGenerator(init_boardcase)
+    moves_and_new_boardcases = move_generator.gen_black_moves_and_boardcases()
+    for item in moves_and_new_boardcases:
+        print("Move: ", item[0])
+        show_board(item[1].board)
+    moves = [item[0] for item in moves_and_new_boardcases]
     expected_moves = [
         Move(B1, 6, 3),
         Move(B1, 6, 4),
@@ -48,10 +58,8 @@ def test_gen_black_moves():
         Move(B3, 8, 5)
     ]
     assert len(moves) == len(expected_moves)
-    i = 0
-    while i < len(moves):
+    for i in range(len(moves)):
         assert moves[i] == expected_moves[i]
-        i += 1
 
 
 def test_show_board(board):
@@ -62,10 +70,10 @@ def main():
     test_check_red_win()
     test_check_black_win()
 
+    test_show_board(INIT_BOARD)
+
     test_gen_red_moves()
     test_gen_black_moves()
-
-    test_show_board(INIT_BOARD)
 
 
 if __name__ == "__main__":

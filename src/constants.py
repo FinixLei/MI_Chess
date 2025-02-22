@@ -39,8 +39,8 @@ STONE_SHOW_MAP = {
     0x00: 'E '
 }
 
-RED_PIECES = [R1, R2, R3]
-BLACK_PIECES = [B1, B2, B3]
+RED_STONES   = [R1, R2, R3]
+BLACK_STONES = [B1, B2, B3]
 
 RED_INIT_POSITIONS = {
     R1: 0,
