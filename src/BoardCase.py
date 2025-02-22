@@ -1,27 +1,12 @@
 from constants import INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS
 
-"""
-    BoardCase describes a board case in the game, including:
-    - board: the board presented as a list like INIT_BOARD
-    - red_positions: a map with key as red stones and value as position in board
-    - black_positions: a map with key as black stones and value as position in board
-    - red_turn: whether it's red's turn
-    
-"""
-
-class Move:
-    def __init__(self, stone, start, end):
-        self.stone = stone
-        self.start = start
-        self.end = end
-
-    def __str__(self):
-        return f"{self.stone}_{self.start}_{self.end}"
-
-    def __eq__(self, other):
-        return self.stone == other.stone and self.start == other.start and self.end == other.end
-
-
+############################################################################################
+#  BoardCase: describes a board case in the game, including:
+#  - board: the board presented as a list like INIT_BOARD
+#  - red_positions: a map with key as red stones and value as position in board
+#  - black_positions: a map with key as black stones and value as position in board
+#  - red_turn: whether it's red's turn
+############################################################################################
 class BoardCase:
     def __init__(self,
                  board=INIT_BOARD,

@@ -1,5 +1,6 @@
 from constants import LINES, ROUTING_MAP, EMPTY, STONE_SHOW_MAP
-from structure import Move
+from Move import Move
+
 
 def check_red_win(red_positions):
     red_positions = sorted(red_positions)
@@ -7,6 +8,7 @@ def check_red_win(red_positions):
         if red_positions == line and line != [0, 1, 2]:
             return True
     return False
+
 
 def check_black_win(black_positions):
     black_positions = sorted(black_positions)
@@ -16,10 +18,10 @@ def check_black_win(black_positions):
     return False
 
 
-"""
-    @param board: the board presented as a list like INIT_BOARD
-    @param red_positions: a map with key as red stones and value as position in board
-"""
+########################################################################################################
+# @param board: the board presented as a list like INIT_BOARD
+# @param red_positions: a map with key as red stones and value as position in board
+########################################################################################################
 def gen_red_moves(board, red_positions):
     moves = []
     for red_stone in red_positions:
@@ -30,10 +32,11 @@ def gen_red_moves(board, red_positions):
                 moves.append(Move(red_stone, position, pos))
     return moves
 
-"""
-    @param board: the board presented as a list like INIT_BOARD
-    @param black_positions: a map with key as black stones and value as position in board
-"""
+
+########################################################################################################
+#    @param board: the board presented as a list like INIT_BOARD
+#    @param black_positions: a map with key as black stones and value as position in board
+########################################################################################################
 def gen_black_moves(board, black_positions):
     moves = []
     for black_stone in black_positions:
@@ -43,6 +46,7 @@ def gen_black_moves(board, black_positions):
             if board[pos] == EMPTY:
                 moves.append(Move(black_stone, position, pos))
     return moves
+
 
 def show_board(board):
     for pos in range(9):
