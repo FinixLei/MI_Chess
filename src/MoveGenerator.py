@@ -3,7 +3,6 @@ import copy
 from BoardCase import BoardCase
 from Move import Move
 from constants import ROUTING_MAP, EMPTY
-import utils
 
 #####################################################################################################
 #  MoveGenerator: given a specific BoardCase, generate all Moves and corresponding new BoardCases
@@ -12,7 +11,6 @@ import utils
 class MoveGenerator:
     def __init__(self, board_case: BoardCase):
         self._board_case = board_case
-        self._moves = []
 
     @property
     def board_case(self):

@@ -2,18 +2,18 @@ from constants import LINES, STONE_SHOW_MAP, STONE_TO_NUM
 from Move import Move
 
 
-def check_red_win(red_positions):
-    red_positions = sorted(red_positions)
+def check_red_win(red_position_list):
+    red_position_list = sorted(red_position_list)
     for line in LINES:
-        if red_positions == line and line != [0, 1, 2]:
+        if red_position_list == line and line != [0, 1, 2]:
             return True
     return False
 
 
-def check_black_win(black_positions):
-    black_positions = sorted(black_positions)
+def check_black_win(black_position_list):
+    black_position_list = sorted(black_position_list)
     for line in LINES:
-        if black_positions == line and line != [6, 7, 8]:
+        if black_position_list == line and line != [6, 7, 8]:
             return True
     return False
 
@@ -24,6 +24,7 @@ def show_board(board):
         print(stone, end=" ")
         if (pos + 1) % 3 == 0:
             print("")
+    print("-" * 30)
 
 
 ###########################################

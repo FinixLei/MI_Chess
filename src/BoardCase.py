@@ -24,7 +24,7 @@ class BoardCase:
             start_pos = self._red_positions[stone]
             self._red_positions[stone] = end_pos
             self._board[start_pos] = EMPTY
-        elif stone in self._black_positions[stone]:
+        elif stone in self._black_positions:
             start_pos = self._black_positions[stone]
             self._black_positions[stone] = end_pos
             self._board[start_pos] = EMPTY

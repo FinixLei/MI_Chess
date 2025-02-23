@@ -1,12 +1,12 @@
-from constants import INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, STONE_TO_NUM
-from utils import show_board, parse_user_move
+from constants import STONE_SHOW_MAP
+from utils import show_board, parse_user_move, check_red_win, check_black_win
 from BoardCase import BoardCase
-from MoveGenerator import MoveGenerator
 from MoveValidator import MoveValidator
-
+from Engine import Engine
 
 def user_red_play():
     move_validator = MoveValidator()
+    engine = Engine()
     current_board_case = BoardCase()
     show_board(current_board_case.board)
     while True:
@@ -30,7 +30,24 @@ def user_red_play():
         current_board_case.make_move(red_stone, end_pos)
         show_board(current_board_case.board)
 
-        # TODO: Engine generate move and show board
+        if check_red_win(current_board_case.red_positions.values()):
+            print("Red Win!")
+            exit(0)
+
+        engine.set_board_case(current_board_case)
+        black_stone, end_pos = engine.gen_random_move()
+        if black_stone is None:
+            print("No Available Moves, Pass!")
+            current_board_case.red_turn(not current_board_case.red_turn)
+        else:
+            current_board_case.make_move(black_stone, end_pos)
+
+        engine_move = f"{STONE_SHOW_MAP[black_stone]}->{end_pos+1}"
+        print(f"Engine Move: {engine_move}")
+        show_board(current_board_case.board)
+        if check_black_win(current_board_case.black_positions.values()):
+            print("Black Win!")
+            exit(0)
 
 
 def user_black_play():
