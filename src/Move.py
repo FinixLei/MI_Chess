@@ -2,7 +2,7 @@
 # Move: describes one specific stone moves from "start" position to "end" position
 ##########################################################################################
 class Move:
-    def __init__(self,stone,start_pos,end_pos):
+    def __init__(self, stone, start_pos, end_pos):
         self._stone=stone
         self._start_pos = start_pos
         self._end_pos = end_pos

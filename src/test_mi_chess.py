@@ -1,6 +1,6 @@
 from constants import LINES, INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS
 from constants import R1, R2, R3, B1, B2, B3
-from utils import check_red_win, check_black_win, show_board
+from utils import check_red_win, check_black_win, show_board, parse_user_move
 from BoardCase import BoardCase
 from Move import Move
 from MoveGenerator import MoveGenerator
@@ -66,6 +66,22 @@ def test_show_board(board):
     show_board(board)
 
 
+def test_parse_user_move():
+    user_move = 'R1->4'
+    expected_values = (True, R1, 3)
+    returned_values = parse_user_move(user_move)
+    assert expected_values == returned_values
+
+    user_move = 'B3->6'
+    expected_values = (True, B3, 5)
+    returned_values = parse_user_move(user_move, part='B')
+    assert expected_values == returned_values
+
+    user_move = 'B2=>5'
+    expected_values = False
+    returned_values = parse_user_move(user_move, part='B')
+    assert expected_values == returned_values
+
 def main():
     test_check_red_win()
     test_check_black_win()
@@ -74,6 +90,8 @@ def main():
 
     test_gen_red_moves()
     test_gen_black_moves()
+
+    test_parse_user_move()
 
 
 if __name__ == "__main__":

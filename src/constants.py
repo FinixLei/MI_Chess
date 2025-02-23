@@ -29,14 +29,23 @@ B2 = 0x22
 B3 = 0x23
 EMPTY = 0x00
 
+STONE_TO_NUM = {
+    'R1': R1,
+    'R2': R2,
+    'R3': R3,
+    'B1': B1,
+    'B2': B2,
+    'B3': B3
+}
+
 STONE_SHOW_MAP = {
-    0x11: 'R1',
-    0x12: 'R2',
-    0x13: 'R3',
-    0x21: 'B1',
-    0x22: 'B2',
-    0x23: 'B3',
-    0x00: 'E '
+    R1: 'R1',
+    R2: 'R2',
+    R3: 'R3',
+    B1: 'B1',
+    B2: 'B2',
+    B3: 'B3',
+    EMPTY: 'E '
 }
 
 RED_STONES   = [R1, R2, R3]

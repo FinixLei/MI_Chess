@@ -1,4 +1,4 @@
-from constants import LINES, ROUTING_MAP, EMPTY, STONE_SHOW_MAP
+from constants import LINES, STONE_SHOW_MAP, STONE_TO_NUM
 from Move import Move
 
 
@@ -24,3 +24,26 @@ def show_board(board):
         print(stone, end=" ")
         if (pos + 1) % 3 == 0:
             print("")
+
+
+###########################################
+# Example of user move: "R1->4", "B2->6"
+###########################################
+def parse_user_move(user_move, part='R'):
+    try:
+        if len(user_move) != 5:
+            return False
+        if user_move[0].upper() != part.upper():
+            return False
+        if user_move[2:4] != '->':
+            return False
+        if user_move[1] not in ['1', '2', '3']:
+            return False
+        end_pos = int(user_move[4]) - 1
+        if end_pos not in range(9):
+            return False
+        stone = STONE_TO_NUM[user_move[:2].upper()]
+        return True, stone, end_pos
+    except Exception as ex:
+        print(f"Exception happened when parsing user move {user_move}: {str(ex)}")
+        return False

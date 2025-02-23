@@ -1,4 +1,4 @@
-from constants import INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS
+from constants import INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, EMPTY
 
 ############################################################################################
 #  BoardCase: describes a board case in the game, including:
@@ -17,6 +17,20 @@ class BoardCase:
         self._red_positions = red_positions
         self._black_positions = black_positions
         self._red_turn = red_turn
+
+    def make_move(self, stone, end_pos):
+        self._board[end_pos] = stone
+        if stone in self._red_positions:
+            start_pos = self._red_positions[stone]
+            self._red_positions[stone] = end_pos
+            self._board[start_pos] = EMPTY
+        elif stone in self._black_positions[stone]:
+            start_pos = self._black_positions[stone]
+            self._black_positions[stone] = end_pos
+            self._board[start_pos] = EMPTY
+        else:
+            raise Exception(f"No such stone: {stone}")
+        self._red_turn = not self._red_turn
 
     @property
     def board(self):
