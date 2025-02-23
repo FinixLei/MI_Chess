@@ -15,7 +15,7 @@ class Engine:
     ###################################################################
     def gen_random_move(self):
         if self._board_case is None:
-            return None
+            return None, None
 
         move_generator = MoveGenerator(self._board_case)
         if self._board_case.red_turn:
@@ -24,7 +24,7 @@ class Engine:
             moves_and_new_boardcases = move_generator.gen_black_moves_and_boardcases()
 
         if len(moves_and_new_boardcases) == 0:
-            return None
+            return None, None
 
         move = moves_and_new_boardcases[random.randint(0, len(moves_and_new_boardcases)-1)][0]
         return move.stone, move.end_pos
