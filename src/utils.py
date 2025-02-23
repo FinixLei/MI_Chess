@@ -1,5 +1,4 @@
-from constants import LINES, STONE_SHOW_MAP, STONE_TO_NUM
-from Move import Move
+from constants import LINES, STONE_SHOW_MAP, STONE_TO_NUM, EMPTY
 
 
 def check_red_win(red_position_list):
@@ -18,7 +17,7 @@ def check_black_win(black_position_list):
     return False
 
 
-def show_board(board):
+def simple_show_board(board):
     for pos in range(9):
         stone = STONE_SHOW_MAP.get(board[pos])
         print(stone, end=" ")
@@ -26,6 +25,42 @@ def show_board(board):
             print("")
     print("-" * 30)
 
+###################################
+# @param board: a list of stones
+###################################
+def show_board(board):
+    show_stone_list = []
+    ONE_SPACE = " "
+    ONE_DASH = "-"
+    for i in range(9):
+        stone = board[i]
+        if stone == EMPTY:
+            if i in [0, 3, 6]:
+                stone = str(i+1) + ONE_SPACE + ONE_DASH
+            elif i in [1, 4, 7]:
+                stone = ONE_SPACE + str(i+1) + ONE_DASH
+            else:  # i in [2, 5, 8]
+                stone = ONE_SPACE*2 + str(i+1)
+        else:
+            stone = STONE_SHOW_MAP[board[i]]
+            if i in [0, 3, 6]:
+                stone = stone + ONE_DASH
+            elif i in [1, 4, 7]:
+                stone = stone + ONE_DASH
+            else:  # i in [2, 5, 8]:
+                stone = ONE_SPACE + stone
+        show_stone_list.append(stone)
+
+    line_list = [
+        f"{show_stone_list[0]}{show_stone_list[1]}{show_stone_list[2]}",
+        f"| \\ | / |",
+        f"{show_stone_list[3]}{show_stone_list[4]}{show_stone_list[5]}",
+        f"| / | \\ |",
+        f"{show_stone_list[6]}{show_stone_list[7]}{show_stone_list[8]}",
+    ]
+    for line in line_list:
+        print(line)
+    print("-" * 30)
 
 ###########################################
 # Example of user move: "R1->4", "B2->6"
@@ -33,18 +68,19 @@ def show_board(board):
 def parse_user_move(user_move, part='R'):
     try:
         if len(user_move) != 5:
-            return False
+            return False, None, None
         if user_move[0].upper() != part.upper():
-            return False
+            print("You may not belong to this part")
+            return False, None, None
         if user_move[2:4] != '->':
-            return False
+            return False, None, None
         if user_move[1] not in ['1', '2', '3']:
-            return False
+            return False, None, None
         end_pos = int(user_move[4]) - 1
         if end_pos not in range(9):
-            return False
+            return False, None, None
         stone = STONE_TO_NUM[user_move[:2].upper()]
         return True, stone, end_pos
     except Exception as ex:
         print(f"Exception happened when parsing user move {user_move}: {str(ex)}")
-        return False
+        return False, None, None
