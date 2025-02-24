@@ -33,8 +33,7 @@ def user_play():
     show_board(current_board_case.board)
 
     if not is_user_red:
-        engine.set_board_case(current_board_case)
-        stone, end_pos = engine.gen_random_move()
+        stone, end_pos = engine.gen_random_move(current_board_case)
         current_board_case.make_move(stone, end_pos)
         engine_move = f"{STONE_SHOW_MAP[stone]}->{end_pos+1}"
         print(f"Engine Move: {engine_move}")
@@ -64,8 +63,7 @@ def user_play():
         _check_win(current_board_case)
 
         # Turn to Engine to play
-        engine.set_board_case(current_board_case)
-        stone, end_pos = engine.gen_random_move()
+        stone, end_pos = engine.gen_random_move(current_board_case)
         if stone is None:
             print("No Available Moves, Pass!")
             current_board_case.red_turn(not current_board_case.red_turn)
