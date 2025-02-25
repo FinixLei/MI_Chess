@@ -1,3 +1,5 @@
+from constants import STONE_SHOW_MAP
+
 ##########################################################################################
 # Move: describes one specific stone moves from "start" position to "end" position
 ##########################################################################################
@@ -8,7 +10,8 @@ class Move:
         self._end_pos = end_pos
 
     def __str__(self):
-        return f"{self._stone}_{self._start_pos}_{self._end_pos}"
+        stone = STONE_SHOW_MAP[self._stone]
+        return f"{stone}_{self._start_pos}_{self._end_pos}"
 
     def __eq__(self, other):
         return self.stone == other.stone and self.start_pos == other.start_pos and self.end_pos == other.end_pos

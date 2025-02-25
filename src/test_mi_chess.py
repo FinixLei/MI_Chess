@@ -1,9 +1,10 @@
 from constants import LINES, INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS
-from constants import R1, R2, R3, B1, B2, B3
-from utils import check_red_win, check_black_win, show_board, parse_user_move
+from constants import R1, R2, R3, B1, B2, B3, EMPTY
+from utils import check_red_win, check_black_win, show_board, show_board_case, parse_user_move, gen_red_black_positions
 from BoardCase import BoardCase
 from Move import Move
 from MoveGenerator import MoveGenerator
+from Engine import Engine
 
 
 def test_check_red_win():
@@ -82,16 +83,34 @@ def test_parse_user_move():
     returned_values = parse_user_move(user_move, part='B')
     assert expected_values == returned_values
 
+
+def test_min_max():
+    init_board = [B1, R2, R3, EMPTY, R1, B3, EMPTY, B2, EMPTY]
+    init_board = [B1, R2, R3, R1, EMPTY, B3, B2, EMPTY, EMPTY]
+    init_board = [R2, EMPTY, R3, R1, B1, B3, B2, EMPTY, EMPTY]
+    init_board = [EMPTY, B1, R3, R1, R2, B3, B2, EMPTY, EMPTY]
+    red_positions, black_positions = gen_red_black_positions(init_board)
+    board_case = BoardCase(init_board, red_positions, black_positions, False)
+    show_board_case(board_case)
+
+    score, move = Engine.minimax(board_case, 6)
+    print(f"Score = {score}, Move = {move}")
+    board_case.make_move(move.stone, move.end_pos)
+    show_board_case(board_case)
+
+
 def main():
-    test_check_red_win()
-    test_check_black_win()
+    # test_check_red_win()
+    # test_check_black_win()
+    #
+    # test_show_board(INIT_BOARD)
+    #
+    # test_gen_red_moves()
+    # test_gen_black_moves()
+    #
+    # test_parse_user_move()
 
-    test_show_board(INIT_BOARD)
-
-    test_gen_red_moves()
-    test_gen_black_moves()
-
-    test_parse_user_move()
+    test_min_max()
 
 
 if __name__ == "__main__":
