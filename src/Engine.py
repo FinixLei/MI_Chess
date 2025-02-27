@@ -78,8 +78,8 @@ class Engine:
             return best_score, best_move
 
     @staticmethod
-    def gen_move(board_case: BoardCase, depth: int = 6):
+    def gen_move(board_case: BoardCase, depth: int = 10):
         score, move = Engine.minimax(board_case, depth)
         if move is None:
             return None
-        return move.stone, move.end_pos
+        return move.stone, move.end_pos, score

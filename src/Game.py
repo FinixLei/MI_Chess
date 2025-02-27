@@ -5,7 +5,7 @@ from MoveValidator import MoveValidator
 from Engine import Engine
 
 
-def user_play():
+def user_play(DEPTH=10):
     def _check_win(board_case: BoardCase):
         if check_red_win(board_case.red_positions.values()):
             print("Red Win!")
@@ -34,10 +34,10 @@ def user_play():
 
     if not is_user_red:
         # stone, end_pos = engine.gen_random_move(current_board_case)
-        stone, end_pos = engine.gen_move(current_board_case)
+        stone, end_pos, score = engine.gen_move(current_board_case, depth=DEPTH)
         current_board_case.make_move(stone, end_pos)
         engine_move = f"{STONE_SHOW_MAP[stone]}->{end_pos+1}"
-        print(f"Engine Move: {engine_move}")
+        print(f"Engine Move: {engine_move}, Score={score}")
         show_board(current_board_case.board)
 
     while True:
@@ -65,7 +65,7 @@ def user_play():
 
         # Turn to Engine to play
         # stone, end_pos = engine.gen_random_move(current_board_case)
-        stone, end_pos = engine.gen_move(current_board_case)
+        stone, end_pos, score = engine.gen_move(current_board_case, depth=DEPTH)
         if stone is None:
             print("No Available Moves, Pass!")
             current_board_case.red_turn(not current_board_case.red_turn)
@@ -73,13 +73,13 @@ def user_play():
             current_board_case.make_move(stone, end_pos)
 
         engine_move = f"{STONE_SHOW_MAP[stone]}->{end_pos+1}"
-        print(f"Engine Move: {engine_move}")
+        print(f"Engine Move: {engine_move}, Score={score}")
         show_board(current_board_case.board)
         _check_win(current_board_case)
 
 
 def main():
-    user_play()
+    user_play(DEPTH=4)
 
 
 if __name__ == '__main__':
