@@ -20,10 +20,10 @@ class MoveGenerator:
     def board_case(self, value):
         self._board_case = value
 
-    ########################################################################################################
-    # Generate all Red moves and corresponding new BoardCases according to current BoardCase instance
-    # @return: a list of (Move, BoardCase)
-    ########################################################################################################
+    """
+        Generate all Red moves and corresponding new BoardCases according to current BoardCase instance
+        :return: a list of (Move, BoardCase)
+    """
     def gen_red_moves_and_boardcases(self):
         moves_and_boardcases = []
         for red_stone in self._board_case.red_positions:
@@ -43,15 +43,15 @@ class MoveGenerator:
                     board[start_pos] = EMPTY
                     board[end_pos] = red_stone
                     red_positions[red_stone] = end_pos
-                    new_boardcases  = BoardCase(board, red_positions, black_positions, False)
-                    moves_and_boardcases.append((new_move, new_boardcases))
+                    new_board_case  = BoardCase(board, red_positions, black_positions, False)
+                    moves_and_boardcases.append((new_move, new_board_case))
 
         return moves_and_boardcases
 
-    ########################################################################################################
-    # Generate all Black moves and corresponding new BoardCases according to current BoardCase instance
-    # @return: a list of (Move, BoardCase)
-    ########################################################################################################
+    """
+        Generate all Black moves and corresponding new BoardCases according to current BoardCase instance
+        :return: a list of (Move, BoardCase)
+    """
     def gen_black_moves_and_boardcases(self):
         moves_and_boardcases = []
         for black_stone in self._board_case.black_positions:
@@ -71,7 +71,7 @@ class MoveGenerator:
                     board[start_pos] = EMPTY
                     board[end_pos] = black_stone
                     black_positions[black_stone] = end_pos
-                    new_boardcases  = BoardCase(board, red_positions, black_positions, False)
-                    moves_and_boardcases.append((new_move, new_boardcases))
+                    new_board_case  = BoardCase(board, red_positions, black_positions, True)
+                    moves_and_boardcases.append((new_move, new_board_case))
 
         return moves_and_boardcases

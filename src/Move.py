@@ -11,7 +11,7 @@ class Move:
 
     def __str__(self):
         stone = STONE_SHOW_MAP[self._stone]
-        return f"{stone}_{self._start_pos}_{self._end_pos}"
+        return f"{stone}_{self._start_pos + 1}_{self._end_pos + 1}"
 
     def __eq__(self, other):
         return self.stone == other.stone and self.start_pos == other.start_pos and self.end_pos == other.end_pos

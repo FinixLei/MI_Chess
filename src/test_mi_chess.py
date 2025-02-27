@@ -41,6 +41,9 @@ def test_gen_red_moves():
     for i in range(len(moves)):
         assert moves[i] == expected_moves[i]
 
+    new_board_cases = [item[1] for item in moves_and_new_boardcases]
+    for board_case in new_board_cases:
+        assert False, board_case.red_turn
 
 def test_gen_black_moves():
     print("Test Gen Black Moves")
@@ -61,6 +64,10 @@ def test_gen_black_moves():
     assert len(moves) == len(expected_moves)
     for i in range(len(moves)):
         assert moves[i] == expected_moves[i]
+
+    new_board_cases = [item[1] for item in moves_and_new_boardcases]
+    for board_case in new_board_cases:
+        assert True, board_case.red_turn
 
 
 def test_show_board(board):
@@ -93,7 +100,7 @@ def test_min_max():
     board_case = BoardCase(init_board, red_positions, black_positions, False)
     show_board_case(board_case)
 
-    score, move = Engine.minimax(board_case, 6)
+    score, move = Engine.minimax(board_case, 10)
     print(f"Score = {score}, Move = {move}")
     board_case.make_move(move.stone, move.end_pos)
     show_board_case(board_case)
