@@ -1,5 +1,5 @@
 from BoardCase import BoardCase
-from constants import R1, R2, R3, B1, B2, B3, EMPTY, ROUTING_MAP
+from constants import R1, R2, R3, B1, B2, B3, EMPTY, ROUTING
 
 class MoveValidator:
     @staticmethod
@@ -19,7 +19,7 @@ class MoveValidator:
                 return False
         else:
             return False
-        if end_pos not in ROUTING_MAP.get(start_pos):
+        if end_pos not in ROUTING.get(start_pos):
             print(f"Cannot reach the destination {end_pos} from {start_pos}")
             return False
         return True

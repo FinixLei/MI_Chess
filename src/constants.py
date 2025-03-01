@@ -1,4 +1,11 @@
-ROUTING_MAP = {
+from enum import Enum
+
+class PlayerColor(Enum):
+    RED = 1
+    BLACK = 2
+
+
+ROUTING = {
     0: [1, 3, 4],
     1: [0, 2, 4],
     2: [1, 4, 5],

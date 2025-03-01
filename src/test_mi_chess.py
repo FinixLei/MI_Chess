@@ -23,13 +23,13 @@ def test_check_black_win():
 
 def test_gen_red_moves():
     print("Test Gen Red Moves")
-    init_boardcase = BoardCase(INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, True)
-    move_generator = MoveGenerator(init_boardcase)
-    moves_and_new_boardcases = move_generator.gen_red_moves_and_boardcases()
-    for item in moves_and_new_boardcases:
-        print("Move: ", item[0])
-        show_board(item[1].board)
-    moves = [item[0] for item in moves_and_new_boardcases]
+    init_board_case = BoardCase(INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, True)
+    move_generator = MoveGenerator(init_board_case)
+    moves_and_new_board_cases = move_generator.gen_moves_and_board_cases()
+    for (move, board_case) in moves_and_new_board_cases:
+        print("Move: ", move)
+        show_board_case(board_case)
+    moves = [item[0] for item in moves_and_new_board_cases]
     expected_moves = [
         Move(R1, 0, 3),
         Move(R1, 0, 4),
@@ -41,19 +41,19 @@ def test_gen_red_moves():
     for i in range(len(moves)):
         assert moves[i] == expected_moves[i]
 
-    new_board_cases = [item[1] for item in moves_and_new_boardcases]
+    new_board_cases = [item[1] for item in moves_and_new_board_cases]
     for board_case in new_board_cases:
-        assert False, board_case.red_turn
+        assert (not board_case.red_turn)
 
 def test_gen_black_moves():
     print("Test Gen Black Moves")
-    init_boardcase = BoardCase(INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, False)
-    move_generator = MoveGenerator(init_boardcase)
-    moves_and_new_boardcases = move_generator.gen_black_moves_and_boardcases()
-    for item in moves_and_new_boardcases:
+    init_board_case = BoardCase(INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, False)
+    move_generator = MoveGenerator(init_board_case)
+    moves_and_new_board_cases = move_generator.gen_moves_and_board_cases()
+    for item in moves_and_new_board_cases:
         print("Move: ", item[0])
         show_board(item[1].board)
-    moves = [item[0] for item in moves_and_new_boardcases]
+    moves = [item[0] for item in moves_and_new_board_cases]
     expected_moves = [
         Move(B1, 6, 3),
         Move(B1, 6, 4),
@@ -65,9 +65,9 @@ def test_gen_black_moves():
     for i in range(len(moves)):
         assert moves[i] == expected_moves[i]
 
-    new_board_cases = [item[1] for item in moves_and_new_boardcases]
+    new_board_cases = [item[1] for item in moves_and_new_board_cases]
     for board_case in new_board_cases:
-        assert True, board_case.red_turn
+        assert board_case.red_turn
 
 
 def test_show_board(board):
@@ -86,7 +86,7 @@ def test_parse_user_move():
     assert expected_values == returned_values
 
     user_move = 'B2=>5'
-    expected_values = False
+    expected_values = (False, None, None)
     returned_values = parse_user_move(user_move, part='B')
     assert expected_values == returned_values
 
@@ -100,24 +100,24 @@ def test_min_max():
     board_case = BoardCase(init_board, red_positions, black_positions, False)
     show_board_case(board_case)
 
-    score, move = Engine.minimax(board_case, 10)
+    score, move = Engine.min_max(board_case, 10)
     print(f"Score = {score}, Move = {move}")
     board_case.make_move(move.stone, move.end_pos)
     show_board_case(board_case)
 
 
 def main():
-    # test_check_red_win()
-    # test_check_black_win()
-    #
-    # test_show_board(INIT_BOARD)
-    #
-    # test_gen_red_moves()
-    # test_gen_black_moves()
-    #
-    # test_parse_user_move()
+    test_check_red_win()
+    test_check_black_win()
 
-    test_min_max()
+    test_show_board(INIT_BOARD)
+
+    test_gen_red_moves()
+    test_gen_black_moves()
+
+    test_parse_user_move()
+
+    # test_min_max()
 
 
 if __name__ == "__main__":

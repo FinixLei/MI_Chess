@@ -79,7 +79,7 @@ def user_play(DEPTH=10):
 
 
 def main():
-    user_play(DEPTH=4)
+    user_play(DEPTH=10)
 
 
 if __name__ == '__main__':
