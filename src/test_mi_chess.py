@@ -100,8 +100,13 @@ def test_min_max():
     board_case = BoardCase(init_board, red_positions, black_positions, False)
     show_board_case(board_case)
 
-    score, move = Engine.min_max(board_case, 10)
+    score, move_list = Engine.min_max(board_case, 10)
+    move = move_list[-1]
     print(f"Score = {score}, Move = {move}")
+    moves = ""
+    for mv in move_list[::-1]:
+        moves += str(mv) + ", "
+    print(f"move list = {moves}")
     board_case.make_move(move.stone, move.end_pos)
     show_board_case(board_case)
 
@@ -116,8 +121,7 @@ def main():
     test_gen_black_moves()
 
     test_parse_user_move()
-
-    # test_min_max()
+    test_min_max()
 
 
 if __name__ == "__main__":

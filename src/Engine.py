@@ -53,7 +53,7 @@ class Engine:
             for move_and_board_case in red_moves_and_board_cases:
                 curr_move = move_and_board_case[0]
                 curr_board_case = move_and_board_case[1]
-                curr_score, move_list = Engine.min_max(curr_board_case, depth-1)[0]
+                curr_score, move_list = Engine.min_max(curr_board_case, depth-1)
                 if curr_score > best_score:
                     best_score = curr_score
                     best_move = curr_move
@@ -66,7 +66,7 @@ class Engine:
             for move_and_board_case in black_moves_and_board_cases:
                 curr_move = move_and_board_case[0]
                 curr_board_case = move_and_board_case[1]
-                curr_score, move_list = Engine.min_max(curr_board_case, depth-1)[0]
+                curr_score, move_list = Engine.min_max(curr_board_case, depth-1)
                 if curr_score < best_score:
                     best_score = curr_score
                     best_move = curr_move
@@ -75,9 +75,11 @@ class Engine:
                         break
 
         best_move_list.append(best_move)
-        show_list = best_move_list[::-1]
-        print(f"Depth={depth}, Move List: {show_list}")
-        return best_score, best_move, best_move_list
+        show_list = ""
+        for move in best_move_list[::-1]:
+            show_list += str(move) + ", "
+        # print(f"Depth={depth}, Move List: {show_list}")
+        return best_score, best_move_list
 
     @staticmethod
     def gen_move(board_case: BoardCase, depth: int = 10):
