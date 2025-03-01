@@ -97,19 +97,23 @@ def test_min_max():
     init_board = [R2, EMPTY, R3, R1, B1, B3, B2, EMPTY, EMPTY]
     init_board = [EMPTY, B1, R3, R1, R2, B3, B2, EMPTY, EMPTY]
     init_board = [R1, B2, EMPTY, EMPTY, B1, R3, R2, EMPTY, B3]
-    init_board = [EMPTY, R2, EMPTY, B1, R1, R3, EMPTY, B2, B3]
+    init_board = [EMPTY, R2, EMPTY, B1, R1, R3, EMPTY, B2, B3]  # Deep calculation case
+    init_board = [EMPTY, R2, R3, EMPTY, B1, EMPTY, R1, B2, B3]  # The score should be zero
     red_positions, black_positions = gen_red_black_positions(init_board)
     board_case = BoardCase(init_board, red_positions, black_positions, False)
     show_board_case(board_case)
 
-    score, move_list = Engine.min_max(board_case, 10)
+    score, move_list = Engine.min_max(board_case, 8)
     move = move_list[-1]
     print(f"Score = {score}, Move = {move}")
     moves = ""
     for mv in move_list[::-1]:
         moves += str(mv) + ", "
     print(f"move list = {moves}")
-    board_case.make_move(move.stone, move.end_pos)
+    if move is None:
+        print("No move")
+    else:
+        board_case.make_move(move.stone, move.end_pos)
     show_board_case(board_case)
 
 
