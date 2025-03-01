@@ -1,3 +1,5 @@
+import copy
+
 from constants import STONE_SHOW_MAP
 from utils import show_board, parse_user_move, check_red_win, check_black_win
 from BoardCase import BoardCase
@@ -6,6 +8,8 @@ from Engine import Engine
 
 
 def user_play(DEPTH=10):
+    historical_board_cases = []
+
     def _check_win(board_case: BoardCase):
         if check_red_win(board_case.red_positions.values()):
             print("Red Win!")
@@ -13,6 +17,14 @@ def user_play(DEPTH=10):
         if check_black_win(board_case.black_positions.values()):
             print("Black Win!")
             exit(0)
+        if len(historical_board_cases) >= 10:  # Draw if the same board case appears for 5 times
+            count = 0
+            for tmp_board_case in historical_board_cases:
+                if board_case == tmp_board_case:
+                    count += 1
+                    if count == 5:
+                        print("Draw! The same board case appears for 5 times")
+                        exit(0)
 
     is_user_red = True
     while True:
@@ -40,6 +52,8 @@ def user_play(DEPTH=10):
         print(f"Engine Move: {engine_move}, Score={score}")
         show_board(current_board_case.board)
 
+    historical_board_cases.append(copy.deepcopy(current_board_case))
+
     while True:
         print("Please enter your move (e.g. R1->4): ")
         user_move = input().upper()
@@ -61,6 +75,7 @@ def user_play(DEPTH=10):
         # make user move and show board, then check if user wins
         current_board_case.make_move(user_stone, end_pos)
         show_board(current_board_case.board)
+        historical_board_cases.append(copy.deepcopy(current_board_case))
         _check_win(current_board_case)
 
         # Turn to Engine to play
@@ -75,6 +90,7 @@ def user_play(DEPTH=10):
         engine_move = f"{STONE_SHOW_MAP[stone]}->{end_pos+1}"
         print(f"Engine Move: {engine_move}, Score={score}")
         show_board(current_board_case.board)
+        historical_board_cases.append(copy.deepcopy(current_board_case))
         _check_win(current_board_case)
 
 

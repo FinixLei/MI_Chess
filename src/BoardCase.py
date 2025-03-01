@@ -18,6 +18,16 @@ class BoardCase:
         self._black_positions = black_positions
         self._red_turn = red_turn
 
+    def __eq__(self, other):
+        if self._red_turn != other.red_turn:
+            return False
+        if len(self._board) != len(other.board):
+            return False
+        for i in range(len(self._board)):
+            if self._board[i] != other.board[i]:
+                return False
+        return True
+
     def make_move(self, stone, end_pos):
         self._board[end_pos] = stone
         if stone in self._red_positions:
