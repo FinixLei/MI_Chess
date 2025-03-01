@@ -97,6 +97,7 @@ def test_min_max():
     init_board = [R2, EMPTY, R3, R1, B1, B3, B2, EMPTY, EMPTY]
     init_board = [EMPTY, B1, R3, R1, R2, B3, B2, EMPTY, EMPTY]
     init_board = [R1, B2, EMPTY, EMPTY, B1, R3, R2, EMPTY, B3]
+    init_board = [EMPTY, R2, EMPTY, B1, R1, R3, EMPTY, B2, B3]
     red_positions, black_positions = gen_red_black_positions(init_board)
     board_case = BoardCase(init_board, red_positions, black_positions, False)
     show_board_case(board_case)
