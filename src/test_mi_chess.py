@@ -92,18 +92,19 @@ def test_parse_user_move():
 
 
 def test_min_max():
-    init_board = [B1, R2, R3, EMPTY, R1, B3, EMPTY, B2, EMPTY]
-    init_board = [B1, R2, R3, R1, EMPTY, B3, B2, EMPTY, EMPTY]
-    init_board = [R2, EMPTY, R3, R1, B1, B3, B2, EMPTY, EMPTY]
-    init_board = [EMPTY, B1, R3, R1, R2, B3, B2, EMPTY, EMPTY]
-    init_board = [R1, B2, EMPTY, EMPTY, B1, R3, R2, EMPTY, B3]
-    init_board = [EMPTY, R2, EMPTY, B1, R1, R3, EMPTY, B2, B3]  # Deep calculation case
-    init_board = [EMPTY, R2, R3, EMPTY, B1, EMPTY, R1, B2, B3]  # The score should be zero
+    init_board = [EMPTY, R2, EMPTY, B1, R1, R3, EMPTY, B2, B3]; red_turn = False  # Deep calculation case
+    init_board = [EMPTY, R2, R3, EMPTY, B1, EMPTY, R1, B2, B3]; red_turn = False  # The score should be zero
+    init_board = [EMPTY, R2, R3, EMPTY, B1, B3, R1, B2, EMPTY]; red_turn = True  # The score should be 1000
+
+    # The score should be 1000, any depth >=5 should work, best_move should be R3_3_6
+    init_board = [R2, EMPTY, R3, EMPTY, B1, EMPTY, R1, B2, B3]; red_turn = True
+
+    # init_board = [R2, B1, EMPTY, EMPTY, EMPTY, R3, R1, B2, B3]; red_turn = True  # The score should be 1000
     red_positions, black_positions = gen_red_black_positions(init_board)
-    board_case = BoardCase(init_board, red_positions, black_positions, False)
+    board_case = BoardCase(init_board, red_positions, black_positions, red_turn)
     show_board_case(board_case)
 
-    score, move_list = Engine.min_max(board_case, 8)
+    score, move_list = Engine.min_max(board_case, 6)
     move = move_list[-1]
     print(f"Score = {score}, Move = {move}")
     moves = ""
