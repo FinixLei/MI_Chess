@@ -45,6 +45,7 @@ def test_gen_red_moves():
     for board_case in new_board_cases:
         assert (not board_case.red_turn)
 
+
 def test_gen_black_moves():
     print("Test Gen Black Moves")
     init_board_case = BoardCase(INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, False)
