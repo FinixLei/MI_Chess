@@ -1,0 +1,67 @@
+/* styles.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.board {
+    position: relative;
+    width: 270px; /* 根据棋盘图片的尺寸调整 */
+    height: 270px; /* 根据棋盘图片的尺寸调整 */
+}
+.board-image {
+    width: 100%;
+    height: 100%;
+    /*object-fit: cover; */ /* 或者使用 'contain' 根据需求选择 */
+}
+.pieces {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.piece {
+    position: absolute;
+    width: 35px; /* 根据棋子图片的尺寸调整 */
+    height: 35px; /* 根据棋子图片的尺寸调整 */
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.piece.red {
+    background-color: red;
+}
+.piece.black {
+    background-color: black;
+}
+/* 第一排红子位置 */
+.piece.red:nth-child(1) {
+    top: 2%;
+    left: 2%;
+}
+.piece.red:nth-child(2) {
+    top: 2%;
+    left: 43%;
+}
+.piece.red:nth-child(3) {
+    top: 2%;
+    left: 84%;
+}
+/* 第三排黑子位置 */
+.piece.black:nth-child(4) {
+    top: 88%;
+    left: 2%;
+}
+.piece.black:nth-child(5) {
+    top: 88%;
+    left: 43%;
+}
+.piece.black:nth-child(6) {
+    top: 88%;
+    left: 84%;
+}
