@@ -1,17 +1,17 @@
 // 定义 9 个有效落子位置的坐标
 const validPositions = [
     // 第一排
-    { x:  5, y: 5 },
-    { x: 120, y: 5 },
-    { x: 235, y: 5 },
+    { x:  5, y: 3 },
+    { x: 120, y: 3 },
+    { x: 234, y: 3 },
     // 第二排
-    { x:  5, y: 120 },
-    { x: 120, y: 120 },
-    { x: 235, y: 120 },
+    { x:  5, y: 118 },
+    { x: 120, y: 118 },
+    { x: 234, y: 118 },
     // 第三排
-    { x:  5, y: 235 },
-    { x: 120, y: 235 },
-    { x: 235, y: 235 }
+    { x:  5, y: 233 },
+    { x: 120, y: 233 },
+    { x: 234, y: 233 }
 ];
 
 const PIECE_DIAMETER = 35
@@ -32,11 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const pieces = document.querySelectorAll('.piece');
     const board = document.querySelector('.board');
     let selectedPiece = null;
-    let firstBoardClick = false
 
     // 为每个棋子添加点击事件监听器
     pieces.forEach(piece => {
-        piece.addEventListener('click', () => {
+        piece.addEventListener('click', (event) => {
+            // 阻止事件冒泡
+            event.stopPropagation(); 
+
             // 如果已有选中的棋子，先将其恢复原状，无论该棋子是否是自己
             if (selectedPiece) {
                 selectedPiece.style.transform ='scale(1)';
@@ -59,35 +61,29 @@ document.addEventListener('DOMContentLoaded', () => {
     board.addEventListener('click', (event) => {
         if (!selectedPiece) return;
         
-        if (!firstBoardClick) {
-            firstBoardClick = true;
-        }
-        else {  // firstBoardClick = true
-            // 获取棋盘的边界矩形
-            const rect = board.getBoundingClientRect();
-            // 计算目标位置相对于棋盘左上角的坐标，并减去棋子宽度和高度的一半，使棋子中心对准点击位置
-            let x = event.clientX - rect.left - selectedPiece.offsetWidth / 2;
-            let y = event.clientY - rect.top - selectedPiece.offsetHeight / 2;
+        // 获取棋盘的边界矩形
+        const rect = board.getBoundingClientRect();
+        // 计算目标位置相对于棋盘左上角的坐标，并减去棋子宽度和高度的一半，使棋子中心对准点击位置
+        let x = event.clientX - rect.left - selectedPiece.offsetWidth / 2;
+        let y = event.clientY - rect.top - selectedPiece.offsetHeight / 2;
 
-            new_position = validatePosition(x, y)
-            if (new_position == null) {
-                firstBoardClick = false;
-                return;
-            }
-            else {
-                x = new_position.x
-                y = new_position.y
-            }
-
-            // alert("x=" + x + ", y=" + y)
-            // 设置选中棋子的新位置
-            selectedPiece.style.left = `${x}px`;
-            selectedPiece.style.top = `${y}px`;
-            // 恢复选中棋子的大小
-            selectedPiece.style.transform = 'scale(1)';
-            // 取消选中状态
-            selectedPiece = null;
+        new_position = validatePosition(x, y)
+        if (new_position == null) {
             firstBoardClick = false;
+            return;
         }
+        else {
+            x = new_position.x
+            y = new_position.y
+        }
+
+        // alert("x=" + x + ", y=" + y)
+        // 设置选中棋子的新位置
+        selectedPiece.style.left = `${x}px`;
+        selectedPiece.style.top = `${y}px`;
+        // 恢复选中棋子的大小
+        selectedPiece.style.transform = 'scale(1)';
+        // 取消选中状态
+        selectedPiece = null;
     });
 });
