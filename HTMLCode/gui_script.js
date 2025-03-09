@@ -1,3 +1,5 @@
+import {R1, R2, R3, B1, B2, B3, EMPTY} from "./constants.js"
+
 // 定义 9 个有效落子位置的坐标
 const validPositions = [
     // 第一排
@@ -19,14 +21,27 @@ const PIECE_RADIUS = 17.5
 const BOARD_WIDTH = 270
 const BOARD_HEIGHT = 270
 
+let GUI_BOARD = [R1, R2, R3, EMPTY, EMPTY, EMPTY, B1, B2, B3]
+
 function validatePosition(x, y) {
-    for (const position of validPositions) {
-        if (Math.abs(position.x - x) <= PIECE_DIAMETER && Math.abs(position.y - y) <= PIECE_DIAMETER) {
-            return position;
+    // for (const position of validPositions) {
+    //     if (Math.abs(position.x - x) <= PIECE_DIAMETER && Math.abs(position.y - y) <= PIECE_DIAMETER) {
+    //         return position;
+    //     }
+    // }
+    for (let i = 0; i < validPositions.length; i++) {
+        if (Math.abs(validPositions[i].x - x) <= PIECE_RADIUS && Math.abs(validPositions[i].y - y) <= PIECE_RADIUS) {
+            if (GUI_BOARD[i] == EMPTY) {
+                return validPositions[i];
+            }
+            else {  // 该位置已有棋子
+                return null;
+            }
         }
     }
     return null;
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const pieces = document.querySelectorAll('.piece');
@@ -61,15 +76,18 @@ document.addEventListener('DOMContentLoaded', () => {
     board.addEventListener('click', (event) => {
         if (!selectedPiece) return;
         
+        // 获取点中的棋子ID
+        // const pieceId = selectedPiece.id;
+        // alert(pieceId);
+        
         // 获取棋盘的边界矩形
         const rect = board.getBoundingClientRect();
         // 计算目标位置相对于棋盘左上角的坐标，并减去棋子宽度和高度的一半，使棋子中心对准点击位置
         let x = event.clientX - rect.left - selectedPiece.offsetWidth / 2;
         let y = event.clientY - rect.top - selectedPiece.offsetHeight / 2;
 
-        new_position = validatePosition(x, y)
+        var new_position = validatePosition(x, y)
         if (new_position == null) {
-            firstBoardClick = false;
             return;
         }
         else {
