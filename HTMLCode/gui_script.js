@@ -77,30 +77,63 @@ const validPositions = [
     { x: 234, y: 233 }
 ];
 
-const PIECE_DIAMETER = 35
 const PIECE_RADIUS = 17.5
 const BOARD_WIDTH = 270
 const BOARD_HEIGHT = 270
 
 /**
  * Global Variables
+ * Always maintain 3 variables
+ * When GUI_BOARD changes, the other two must be changed accordingly
+ * 1. GUI_BOARD: the board in GUI_BOARD
+ * 2. RED_POSITIONS: the positions of red stones in GUI_BOARD
+ * 3. BLACK_POSITIONS: the positions of black stones in GUI_BOARD
  */
 let GUI_BOARD = [R1, R2, R3, EMPTY, EMPTY, EMPTY, B1, B2, B3]
+let RED_POSITIONS = {
+    R1: 0,
+    R2: 1,
+    R3: 2
+}
+let BLACK_POSITIONS = {
+    B1: 6,
+    B2: 7,
+    B3: 8
+}
 
 /**
  * Utility Functions
  */
 
-function validatePosition(x, y) {
-    // for (const position of validPositions) {
-    //     if (Math.abs(position.x - x) <= PIECE_DIAMETER && Math.abs(position.y - y) <= PIECE_DIAMETER) {
-    //         return position;
-    //     }
-    // }
+/**
+ * 
+ * @param {目标位置的x坐标} x 
+ * @param {目标位置的y坐标} y 
+ * @param {要移动的棋子} pieceId 
+ * @returns 
+ */
+function validatePosition(x, y, pieceId) {
+    // 获取要移动的棋子的当前位置
+    let currPositionIndex = null;
+    for (let i = 0; i < GUI_BOARD.length; i++) {
+        if (GUI_BOARD[i] == pieceId) {
+            currPositionIndex = i;
+            break;
+        }
+    }
+    if (currPositionIndex == null) {
+        alert("棋子", pieceId, "不在棋盘上")
+        return null;
+    }
+
     for (let i = 0; i < validPositions.length; i++) {
         if (Math.abs(validPositions[i].x - x) <= PIECE_RADIUS && Math.abs(validPositions[i].y - y) <= PIECE_RADIUS) {
-            if (GUI_BOARD[i] == EMPTY) {
-                return validPositions[i];
+            if (GUI_BOARD[i] == EMPTY) {  // 该位置为空
+                // 继续检查两点是否处于线连接的两端
+                if (ROUTING[currPositionIndex].includes(i)) {
+                    return validPositions[i];
+                }
+                return null;                
             }
             else {  // 该位置已有棋子
                 return null;
@@ -110,7 +143,7 @@ function validatePosition(x, y) {
     return null;
 }
 
-// Make a move in GUI_BOARD
+// Make a move on the board （走一步棋）
 function makeMove(pieceId, newPosition) {
     // 找到当前棋子的位置
     for (let i = 0; i < GUI_BOARD.length; i++) {
@@ -125,16 +158,65 @@ function makeMove(pieceId, newPosition) {
         if (validPositions[i].x == newPosition.x && validPositions[i].y == newPosition.y) {
             break;
         }
-        i ++;
     }
     if (i == validPositions.length) {
         return;
     }
+    // 更新棋盘棋子数据结构三变量
     GUI_BOARD[i] = pieceId;
-    console.log(GUI_BOARD)
+    if (RED_STONES.includes(pieceId)) {
+        RED_POSITIONS[pieceId] = i;
+    }
+    else if (BLACK_STONES.includes(pieceId)) {
+        BLACK_POSITIONS[pieceId] = i;
+    }
+    else {
+        alert("没发现这个棋子: ", pieceId);
+    }
+}
+
+function checkWin() {
+    let redPositionList = Object.values(RED_POSITIONS);
+    redPositionList.sort();
+    let lineNum = 1  // 忽略红棋位于[0,1,2]的情况
+    for (; lineNum < LINES.length; lineNum++) {
+        let line = LINES[lineNum];
+        let win = true;
+        for(let i=0; i<3; i++) {
+            if (line[i] != redPositionList[i]) {
+                win = false;
+                continue;
+            }
+        }
+        if (win) {
+            alert("红方获胜！");
+            return;
+        }
+    }
+
+    let blackPositionList = Object.values(BLACK_POSITIONS);
+    blackPositionList.sort();
+    for (lineNum = 0; lineNum < LINES.length; lineNum++) {
+        if (lineNum == 2) continue;  // 忽略黑棋位于[6,7,8]的情况
+        let line = LINES[lineNum];
+        let win = true;
+        for(let i=0; i<3; i++) {
+            if (line[i] != blackPositionList[i]) {
+                win = false;
+                continue;
+            }
+        }
+        if (win) {
+            alert("黑方获胜！");
+            return;
+        }
+    };
 }
 
 
+/**
+ * 添加棋子和棋盘的点击事件
+ */
 document.addEventListener('DOMContentLoaded', () => {
     const pieces = document.querySelectorAll('.piece');
     const board = document.querySelector('.board');
@@ -169,8 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!selectedPiece) return;
         
         // 获取点中的棋子ID
-        // const pieceId = selectedPiece.id;
-        // alert(pieceId);
+        const pieceId = selectedPiece.id;
         
         // 获取棋盘的边界矩形
         const rect = board.getBoundingClientRect();
@@ -178,23 +259,25 @@ document.addEventListener('DOMContentLoaded', () => {
         let x = event.clientX - rect.left - selectedPiece.offsetWidth / 2;
         let y = event.clientY - rect.top - selectedPiece.offsetHeight / 2;
 
-        var new_position = validatePosition(x, y)
-        if (new_position == null) {
+        var newPosition = validatePosition(x, y, pieceId)
+        if (newPosition == null) {
             return;
         }
         else {
-            x = new_position.x
-            y = new_position.y
-            // alert(selectedPiece.id);
-            makeMove(selectedPiece.id, new_position)
+            makeMove(selectedPiece.id, newPosition);
 
             // 设置选中棋子的新位置
-            selectedPiece.style.left = `${x}px`;
-            selectedPiece.style.top = `${y}px`;
+            selectedPiece.style.left = `${newPosition.x}px`;
+            selectedPiece.style.top = `${newPosition.y}px`;
             // 恢复选中棋子的大小
             selectedPiece.style.transform = 'scale(1)';
             // 取消选中状态
             selectedPiece = null;
+            
+            // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
+            setTimeout(() => {
+                checkWin();
+            }, 2);
         }
     });
 });
