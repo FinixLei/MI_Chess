@@ -1,9 +1,14 @@
-// import {R1, R2, R3, B1, B2, B3, EMPTY} from "./constants.js"
+/******************************************
+ * 
+ * Constants
+ * 
+ ******************************************/
 
-/**
- *  Constants Variables Part
- */
-
+const FIGHT_TYPE = {
+    HUMAN_HUMAN: 'human-human',
+    HUMAN_AI: 'human-ai',
+    UNDEFINED: 'undefined'
+}
 const PIECE_COLOR = {
     RED: 'Red',
     BLACK: 'Black'
@@ -101,9 +106,13 @@ let BLACK_POSITIONS = {
     B3: 8
 }
 
-/**
+let CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+
+/******************************************
+ * 
  * Utility Functions
- */
+ * 
+ ******************************************/
 
 /**
  * 
@@ -280,4 +289,35 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 2);
         }
     });
+
+    // 为 human-human-button 添加点击事件监听器
+    const human_human_btn = document.getElementById('human-human-button');
+    human_human_btn.addEventListener('click', function() {
+        // 修改 this 指向为当前按钮
+        this.classList.toggle('disabled');
+
+        if (this.classList.contains('disabled')) {
+            CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_HUMAN;
+        }
+        else {
+            CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+        }
+        console.log("Current Fight Type is ", CURR_FIGHT_TYPE);
+    });
+
+    // 为 human-ai-button 添加点击事件监听器
+    const human_ai_btn = document.getElementById('human-ai-button');
+    human_ai_btn.addEventListener('click', function () {
+        // 切换按钮的 disabled 类
+        this.classList.toggle('disabled');
+
+        if (this.classList.contains('disabled')) {
+            CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_AI;
+        }
+        else {
+            CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+        }
+        console.log("Current Fight Type is ", CURR_FIGHT_TYPE);
+    });
 });
+

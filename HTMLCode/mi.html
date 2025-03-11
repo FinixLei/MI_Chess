@@ -6,25 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>米字棋游戏</title>
     <link rel="stylesheet" href="styles.css">
+
+    <title>Toggle Button State</title>
+    <style>
+        /* 定义按钮的默认样式 */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* 定义按钮变灰的样式 */
+        button.disabled {
+            background-color: #ccc;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        /* 新增 CSS 类 */
+        .button-container {
+            display: flex;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="board">
-        <!-- 棋盘图片 -->
-        <img src="resource/board.png" alt="棋盘" class="board-image">
-        <!-- 棋子容器 -->
-        <div class="pieces">
-            <!-- 第一排三个红子 -->
-            <div id="R1" class="piece red" data-piece="red"></div>
-            <div id="R2" class="piece red" data-piece="red"></div>
-            <div id="R3" class="piece red" data-piece="red"></div>
-            <!-- 第三排三个黑子 -->
-            <div id="B1" class="piece black" data-piece="black"></div>
-            <div id="B2" class="piece black" data-piece="black"></div>
-            <div id="B3" class="piece black" data-piece="black"></div>
+    <!-- 新增一个容器来包裹棋盘和按钮 -->
+    <div class="game-container">
+        <div class="board">
+            <!-- 棋盘图片 -->
+            <img src="resource/board.png" alt="棋盘" class="board-image">
+            <!-- 棋子容器 -->
+            <div class="pieces">
+                <!-- 第一排三个红子 -->
+                <div id="R1" class="piece red" data-piece="red"></div>
+                <div id="R2" class="piece red" data-piece="red"></div>
+                <div id="R3" class="piece red" data-piece="red"></div>
+                <!-- 第三排三个黑子 -->
+                <div id="B1" class="piece black" data-piece="black"></div>
+                <div id="B2" class="piece black" data-piece="black"></div>
+                <div id="B3" class="piece black" data-piece="black"></div>
+            </div>
         </div>
+        
+        <!-- 按钮容器 -->
+        <div class="button-container">
+            <button id="human-human-button">人人对战</button>
+            <button id="human-ai-button">人机对战</button>
+        </div>
+        <script src="gui_script.js"></script>
     </div>
-    <script src="gui_script.js"></script>
-</body>
 
+</body>
 </html>

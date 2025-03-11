@@ -8,7 +8,14 @@ body {
     background-color: #f0f0f0;
 }
 
+.game-container {
+    display: flex;
+    flex-direction: column; /* 设置为垂直布局 */
+    align-items: center; /* 水平居中对齐 */
+}
+
 .board {
+    margin-bottom: 20px; /* 给棋盘下方添加一些间距 */
     position: relative;
     width: 270px; /* 根据棋盘图片的尺寸调整 */
     height: 270px; /* 根据棋盘图片的尺寸调整 */
