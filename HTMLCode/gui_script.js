@@ -86,6 +86,8 @@ const PIECE_RADIUS = 17.5
 const BOARD_WIDTH = 270
 const BOARD_HEIGHT = 270
 
+// ---------------------------------------------------------------------------------------------------------
+
 /**
  * Global Variables
  * Always maintain 3 variables
@@ -94,19 +96,17 @@ const BOARD_HEIGHT = 270
  * 2. RED_POSITIONS: the positions of red stones in GUI_BOARD
  * 3. BLACK_POSITIONS: the positions of black stones in GUI_BOARD
  */
-let GUI_BOARD = [R1, R2, R3, EMPTY, EMPTY, EMPTY, B1, B2, B3]
-let RED_POSITIONS = {
-    R1: 0,
-    R2: 1,
-    R3: 2
-}
-let BLACK_POSITIONS = {
-    B1: 6,
-    B2: 7,
-    B3: 8
-}
+let GUI_BOARD = JSON.parse(JSON.stringify(INIT_BOARD))
+let RED_POSITIONS = JSON.parse(JSON.stringify(RED_INIT_POSITIONS))
+let BLACK_POSITIONS = JSON.parse(JSON.stringify(BLACK_INIT_POSITIONS))
 
 let CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+
+let RED_TURN = true  // 开局红棋先走
+let GAME_OVER = false  // 游戏是否结束
+
+// ---------------------------------------------------------------------------------------------------------
+
 
 /******************************************
  * 
@@ -199,6 +199,7 @@ function checkWin() {
         }
         if (win) {
             alert("红方获胜！");
+            GAME_OVER = true;
             return;
         }
     }
@@ -217,11 +218,38 @@ function checkWin() {
         }
         if (win) {
             alert("黑方获胜！");
+            GAME_OVER = true;
             return;
         }
     };
 }
 
+function resetPiecesPositions() {
+    GAME_OVER = false;
+    GUI_BOARD = JSON.parse(JSON.stringify(INIT_BOARD))
+    RED_POSITIONS = JSON.parse(JSON.stringify(RED_INIT_POSITIONS))
+    BLACK_POSITIONS = JSON.parse(JSON.stringify(BLACK_INIT_POSITIONS))
+    RED_TURN = true;
+
+    // 重置棋子的位置
+    const pieces = document.querySelectorAll('.piece');
+    pieces.forEach(piece => {
+        const pieceId = piece.id;
+        let positionIndex;
+        if (RED_STONES.includes(pieceId)) {
+            positionIndex = RED_POSITIONS[pieceId];
+        } else if (BLACK_STONES.includes(pieceId)) {
+            positionIndex = BLACK_POSITIONS[pieceId];
+        }
+        const newPosition = validPositions[positionIndex];
+        piece.style.left = `${newPosition.x}px`;
+        piece.style.top = `${newPosition.y}px`;
+        console.log("pieceId: ", pieceId, " , x=", newPosition.x, "y=", newPosition.y, 
+            " positionIndex: ", positionIndex)
+    });
+}
+
+// ----------------------------------------------------------------------
 
 /**
  * 添加棋子和棋盘的点击事件
@@ -236,6 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
         piece.addEventListener('click', (event) => {
             // 阻止事件冒泡
             event.stopPropagation(); 
+
+            if (GAME_OVER) return;
 
             // 如果已有选中的棋子，先将其恢复原状，无论该棋子是否是自己
             if (selectedPiece) {
@@ -257,6 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 为棋盘添加点击事件监听器
     board.addEventListener('click', (event) => {
+        if (GAME_OVER) return;
         if (!selectedPiece) return;
         
         // 获取点中的棋子ID
@@ -298,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (this.classList.contains('disabled')) {
             CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_HUMAN;
+            resetPiecesPositions();
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
@@ -313,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (this.classList.contains('disabled')) {
             CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_AI;
+            resetPiecesPositions();
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
