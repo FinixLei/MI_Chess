@@ -171,6 +171,9 @@ function makeMove(pieceId, newPosition) {
     if (i == validPositions.length) {
         return;
     }
+    
+    RED_TURN = !RED_TURN;
+
     // 更新棋盘棋子数据结构三变量
     GUI_BOARD[i] = pieceId;
     if (RED_STONES.includes(pieceId)) {
@@ -244,8 +247,7 @@ function resetPiecesPositions() {
         const newPosition = validPositions[positionIndex];
         piece.style.left = `${newPosition.x}px`;
         piece.style.top = `${newPosition.y}px`;
-        console.log("pieceId: ", pieceId, " , x=", newPosition.x, "y=", newPosition.y, 
-            " positionIndex: ", positionIndex)
+        // console.log("pieceId: ", pieceId, " , x=", newPosition.x, "y=", newPosition.y, " positionIndex: ", positionIndex)
     });
 }
 
@@ -266,6 +268,11 @@ document.addEventListener('DOMContentLoaded', () => {
             event.stopPropagation(); 
 
             if (GAME_OVER) return;
+
+            // 若轮到红棋走，但点击的不是红棋，则返回
+            if (RED_TURN && !RED_STONES.includes(piece.id)) return;
+            // 若轮到黑棋走，但点击的不是黑棋，则返回
+            if (!RED_TURN && !BLACK_STONES.includes(piece.id)) return;
 
             // 如果已有选中的棋子，先将其恢复原状，无论该棋子是否是自己
             if (selectedPiece) {
@@ -321,8 +328,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 为 human-human-button 添加点击事件监听器
+    // 获取按钮元素
     const human_human_btn = document.getElementById('human-human-button');
+    const human_ai_btn = document.getElementById('human-ai-button');
+
+    // 为 human-human-button 添加点击事件监听器
     human_human_btn.addEventListener('click', function() {
         // 修改 this 指向为当前按钮
         this.classList.toggle('disabled');
@@ -330,6 +340,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (this.classList.contains('disabled')) {
             CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_HUMAN;
             resetPiecesPositions();
+            // 检查人机对战按钮是否为灰色，如果是则让其变亮
+            if (human_ai_btn.classList.contains('disabled')) {
+                human_ai_btn.classList.remove('disabled');
+            }
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
@@ -338,7 +352,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 为 human-ai-button 添加点击事件监听器
-    const human_ai_btn = document.getElementById('human-ai-button');
     human_ai_btn.addEventListener('click', function () {
         // 切换按钮的 disabled 类
         this.classList.toggle('disabled');
@@ -346,6 +359,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (this.classList.contains('disabled')) {
             CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_AI;
             resetPiecesPositions();
+            // 检查人人对战按钮是否为灰色，如果是则让其变亮
+            if (human_human_btn.classList.contains('disabled')) {
+                human_human_btn.classList.remove('disabled');
+            }
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
@@ -353,4 +370,3 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Current Fight Type is ", CURR_FIGHT_TYPE);
     });
 });
-
