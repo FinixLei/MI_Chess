@@ -19,11 +19,7 @@ class Engine:
             return None, None
 
         move_generator = MoveGenerator(board_case)
-        if board_case.red_turn:
-            moves_and_new_board_cases = move_generator.gen_moves_and_board_cases()
-        else:
-            moves_and_new_board_cases = move_generator.gen_moves_and_board_cases()
-
+        moves_and_new_board_cases = move_generator.gen_moves_and_board_cases()
         if len(moves_and_new_board_cases) == 0:
             return None, None
 

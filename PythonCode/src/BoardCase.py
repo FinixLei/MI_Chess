@@ -7,6 +7,7 @@ from constants import INIT_BOARD, RED_INIT_POSITIONS, BLACK_INIT_POSITIONS, EMPT
 #  - black_positions: a map with key as black stones and value as the stone's position
 #  - red_turn: whether it's red's turn to play
 ############################################################################################
+
 class BoardCase:
     def __init__(self,
                  board=INIT_BOARD,

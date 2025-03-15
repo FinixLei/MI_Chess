@@ -47,7 +47,7 @@ class MoveGenerator:
                         red_positions[stone] = end_pos
                     else:
                         black_positions[stone] = end_pos
-                    new_board_case  = BoardCase(board, red_positions, black_positions, not self._board_case.red_turn)
+                    new_board_case = BoardCase(board, red_positions, black_positions, not self._board_case.red_turn)
                     moves_and_board_cases.append((new_move, new_board_case))
 
         return moves_and_board_cases
