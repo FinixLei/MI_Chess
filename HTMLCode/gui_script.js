@@ -1,8 +1,6 @@
-/******************************************
- * 
- * Constants
- * 
- ******************************************/
+/***************************************************
+ *          Code Part 1 - Constants
+ **************************************************/
 
 const FIGHT_TYPE = {
     HUMAN_HUMAN: 'human-human',
@@ -87,16 +85,15 @@ const PIECE_RADIUS = 17.5
 const BOARD_WIDTH = 270
 const BOARD_HEIGHT = 270
 
-// ---------------------------------------------------------------------------------------------------------
-
-/**
- * Global Variables
+/********************************************************************************
+ *                      Code Part 2 - Global Variables
  * Always maintain 3 variables
  * When GUI_BOARD changes, the other two must be changed accordingly
  * 1. GUI_BOARD: the board in GUI_BOARD
  * 2. RED_POSITIONS: the positions of red stones in GUI_BOARD
  * 3. BLACK_POSITIONS: the positions of black stones in GUI_BOARD
- */
+ ********************************************************************************/
+
 let GUI_BOARD = JSON.parse(JSON.stringify(INIT_BOARD))
 let RED_POSITIONS = JSON.parse(JSON.stringify(RED_INIT_POSITIONS))
 let BLACK_POSITIONS = JSON.parse(JSON.stringify(BLACK_INIT_POSITIONS))
@@ -106,14 +103,9 @@ let CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
 let RED_TURN = true  // 开局红棋先走
 let GAME_OVER = false  // 游戏是否结束
 
-// ---------------------------------------------------------------------------------------------------------
-
-
-/******************************************
- * 
- * Utility Functions
- * 
- ******************************************/
+/********************************************************************************
+ *                      Code Part 3 - Utility Functions
+ *******************************************************************************/
 
 /**
  * 
@@ -170,6 +162,7 @@ function makeMove(pieceId, newPosition) {
         }
     }
     if (i == validPositions.length) {
+        console.log("Cannot find the piece: ", pieceId);
         return;
     }
     
@@ -248,16 +241,19 @@ function resetPiecesPositions() {
         const newPosition = validPositions[positionIndex];
         piece.style.left = `${newPosition.x}px`;
         piece.style.top = `${newPosition.y}px`;
-        // console.log("pieceId: ", pieceId, " , x=", newPosition.x, "y=", newPosition.y, " positionIndex: ", positionIndex)
     });
 }
 
-// ----------------------------------------------------------------------
+/******************************************************************************
+ *                     Code Part 4 - GUI
+ *****************************************************************************/
 
-/**
- * 添加棋子和棋盘的点击事件
- */
 document.addEventListener('DOMContentLoaded', () => {
+    /**
+     * Code Part 4-1:   添加棋子和棋盘的点击事件
+     */
+    
+    // 为每个棋子添加点击事件监听器
     const pieces = document.querySelectorAll('.piece');
     const board = document.querySelector('.board');
     let selectedPiece = null;
@@ -332,8 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /***************************************************************
-     * 
-     *  以下为按钮点击事件
+     *  Code Part 4-2: 按钮点击事件
      * *************************************************************/
 
     // 获取按钮元素
