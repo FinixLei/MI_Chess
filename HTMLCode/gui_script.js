@@ -115,6 +115,10 @@ class Move {
     isEqual(other) {
         return this.pieceId == other.pieceId && this.from == other.from && this.to == other.to;
     }
+
+    toString() {
+        return "Move: " + this.pieceId + " from " + this.from + " to " + this.to;
+    }
 }
 
 // 定义 BoardCase 类
@@ -140,6 +144,15 @@ class BoardCase {
             return false;
         }
         return true;
+    }
+}
+
+// 定义 MoveAndBoardCase 类
+// 执行该Move实例之后，会达到boardcase所描绘的局面
+class MoveAndBoardCase {
+    constructor(move, boardCase) {
+        this.move = new Move(move.pieceId, move.from, move.to);
+        this.boardCase = new BoardCase(boardCase.board, boardCase.stonePositions, boardCase.redTurn);
     }
 }
 
@@ -284,7 +297,7 @@ function resetPiecesPositions() {
  * @param {BoardCase} boardcase, BoardCase 类的对象
  * @param {str} stone, 即 pieceId
  * @param {int} to, 棋盘上的目标位置
- * @returns true or false, means valid or invalid
+ * @returns {true or false}, means valid or invalid
  */
 function validateMove(boardcase, stone, to) {
     // 目标位置若不为空，则移动非法
@@ -301,6 +314,37 @@ function validateMove(boardcase, stone, to) {
         return false;
     }
     return true;
+}
+
+// 给出一个给定盘面下的所有走法以及对应的盘面
+function genMovesAndBoardCases(boardcase) {
+    let movesAndBoardCases = [];
+    let board = boardcase.board;
+    let redTurn = boardcase.redTurn;
+    let stonePositions = boardcase.stonePositions;
+
+    forEach(stonePositions, (stone) => {
+        if (redTurn && !RED_STONES.includes(stone)) return;
+        if (!redTurn && !BLACK_STONES.includes(stone)) return;
+
+        let from = stonePositions[stone];
+        let availablePositions = ROUTING[from];
+        forEach(availablePositions, (to) => {
+            if (board[to] == EMPTY) {
+                const new_move = new Move(stone, from, to);
+                let new_board = JSON.parse(JSON.stringify(board));
+                new_board[from] = EMPTY;
+                new_board[to] = stone;
+                let new_stonePositions = JSON.parse(JSON.stringify(stonePositions));
+                new_stonePositions[stone] = to;
+                const new_boardcase = new BoardCase(new_board, new_stonePositions, !redTurn);
+                const new_moveAndBoardCase = new MoveAndBoardCase(new_move, new_boardcase);
+                movesAndBoardCases.push(new_moveAndBoardCase);
+                console.log(new_move.toString());
+            }
+        });
+    });
+    return movesAndBoardCases;
 }
 
 /******************************************************************************
