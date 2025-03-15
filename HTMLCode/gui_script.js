@@ -47,13 +47,10 @@ const EMPTY = 'E';
 const RED_STONES   = [R1, R2, R3]
 const BLACK_STONES = [B1, B2, B3]
 
-const RED_INIT_POSITIONS = {
+const STONE_INIT_POSITIONS = {
     R1: 0,
     R2: 1,
-    R3: 2
-}
-
-const BLACK_INIT_POSITIONS = {
+    R3: 2,
     B1: 6,
     B2: 7,
     B3: 8
@@ -90,17 +87,17 @@ const BOARD_HEIGHT = 270
  * Always maintain 3 variables
  * When GUI_BOARD changes, the other two must be changed accordingly
  * 1. GUI_BOARD: the board in GUI_BOARD
- * 2. RED_POSITIONS: the positions of red stones in GUI_BOARD
- * 3. BLACK_POSITIONS: the positions of black stones in GUI_BOARD
+ * 2. STONE_POSITIONS: the positions of all the stones in GUI_BOARD
+ * 3. RED_TURN: whether it is red's turn
+ * 4. CURRR_FIGHT_TYPE: the type of the current fight
+ * 5. GAME_OVER: whether the game is over
  ********************************************************************************/
 
 let GUI_BOARD = JSON.parse(JSON.stringify(INIT_BOARD))
-let RED_POSITIONS = JSON.parse(JSON.stringify(RED_INIT_POSITIONS))
-let BLACK_POSITIONS = JSON.parse(JSON.stringify(BLACK_INIT_POSITIONS))
+let STONE_POSITIONS = JSON.parse(JSON.stringify(STONE_INIT_POSITIONS))
+let RED_TURN = true  // 开局红棋先走
 
 let CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
-
-let RED_TURN = true  // 开局红棋先走
 let GAME_OVER = false  // 游戏是否结束
 
 /********************************************************************************
@@ -147,14 +144,15 @@ function validatePosition(x, y, pieceId) {
 
 // Make a move on the board （走一步棋）
 function makeMove(pieceId, newPosition) {
-    // 找到当前棋子的位置
+    // 清空棋盘上给定的棋子
     for (let i = 0; i < GUI_BOARD.length; i++) {
         if (GUI_BOARD[i] == pieceId) {
-            GUI_BOARD[i] = EMPTY;
+            GUI_BOARD[i] = EMPTY;  // 清空该位置
             break;
         }
     }
 
+    // 查询新的棋子位置是否合理，若合理，则记录下它所对应的 validPositions 数组中的下标
     let i = 0;
     for (; i < validPositions.length; i++) {
         if (validPositions[i].x == newPosition.x && validPositions[i].y == newPosition.y) {
@@ -165,24 +163,20 @@ function makeMove(pieceId, newPosition) {
         console.log("Cannot find the piece: ", pieceId);
         return;
     }
-    
-    RED_TURN = !RED_TURN;
 
-    // 更新棋盘棋子数据结构三变量
+    // 更新棋盘棋子行棋者三变量
     GUI_BOARD[i] = pieceId;
-    if (RED_STONES.includes(pieceId)) {
-        RED_POSITIONS[pieceId] = i;
-    }
-    else if (BLACK_STONES.includes(pieceId)) {
-        BLACK_POSITIONS[pieceId] = i;
+    if (RED_STONES.includes(pieceId) || BLACK_STONES.includes(pieceId)) {
+        STONE_POSITIONS[pieceId] = i;
     }
     else {
         alert("没发现这个棋子: ", pieceId);
     }
+    RED_TURN = !RED_TURN;
 }
 
-function checkWin() {
-    let redPositionList = Object.values(RED_POSITIONS);
+function checkWin() { // 检查是否有一方获胜
+    let redPositionList = [STONE_POSITIONS[R1], STONE_POSITIONS[R2], STONE_POSITIONS[R3]];
     redPositionList.sort();
     let lineNum = 1  // 忽略红棋位于[0,1,2]的情况
     for (; lineNum < LINES.length; lineNum++) {
@@ -201,7 +195,7 @@ function checkWin() {
         }
     }
 
-    let blackPositionList = Object.values(BLACK_POSITIONS);
+    let blackPositionList = [STONE_POSITIONS[B1], STONE_POSITIONS[B2], STONE_POSITIONS[B3]];
     blackPositionList.sort();
     for (lineNum = 0; lineNum < LINES.length; lineNum++) {
         if (lineNum == 2) continue;  // 忽略黑棋位于[6,7,8]的情况
@@ -224,19 +218,16 @@ function checkWin() {
 function resetPiecesPositions() {
     GAME_OVER = false;
     GUI_BOARD = JSON.parse(JSON.stringify(INIT_BOARD))
-    RED_POSITIONS = JSON.parse(JSON.stringify(RED_INIT_POSITIONS))
-    BLACK_POSITIONS = JSON.parse(JSON.stringify(BLACK_INIT_POSITIONS))
+    STONE_POSITIONS = JSON.parse(JSON.stringify(STONE_INIT_POSITIONS))
     RED_TURN = true;
 
     // 重置棋子的位置
     const pieces = document.querySelectorAll('.piece');
     pieces.forEach(piece => {
         const pieceId = piece.id;
-        let positionIndex;
-        if (RED_STONES.includes(pieceId)) {
-            positionIndex = RED_POSITIONS[pieceId];
-        } else if (BLACK_STONES.includes(pieceId)) {
-            positionIndex = BLACK_POSITIONS[pieceId];
+        let positionIndex = -1;
+        if (RED_STONES.includes(pieceId) || BLACK_STONES.includes(pieceId)) {
+            positionIndex = STONE_POSITIONS[pieceId];
         }
         const newPosition = validPositions[positionIndex];
         piece.style.left = `${newPosition.x}px`;
@@ -252,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Code Part 4-1:   添加棋子和棋盘的点击事件
      */
-    
+
     // 为每个棋子添加点击事件监听器
     const pieces = document.querySelectorAll('.piece');
     const board = document.querySelector('.board');
