@@ -101,15 +101,59 @@ let CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
 let GAME_OVER = false  // 游戏是否结束
 
 /********************************************************************************
- *                      Code Part 3 - Utility Functions
+ *                      Code Part 3 - Class definitions
+ *******************************************************************************/
+
+// 定义 Move 类
+class Move {
+    constructor(pieceId, from, to) {
+        this.pieceId = pieceId; // 表示移动的棋子
+        this.from = from;   // 表示棋子的起始位置
+        this.to = to;       // 表示棋子的目标位置
+    }
+
+    isEqual(other) {
+        return this.pieceId == other.pieceId && this.from == other.from && this.to == other.to;
+    }
+}
+
+// 定义 BoardCase 类
+// BoardCase由棋盘数组、棋子位置数组、当前走棋方三者组成
+class BoardCase {
+    constructor(board, stonePositions, redTurn) {
+        this.board = JSON.parse(JSON.stringify(board));
+        this.stonePositions = JSON.parse(JSON.stringify(stonePositions));
+        this.redTurn = redTurn;
+    }
+
+    // 自定义比较方法
+    isEqual(other) {
+        if (this.board.length != other.board.length) {
+            return false;
+        }
+        for (let i = 0; i < this.board.length; i++) {
+            if (this.board[i] != other.board[i]) {
+                return false;
+            }
+        }
+        if (this.redTurn!= other.redTurn) {
+            return false;
+        }
+        return true;
+    }
+}
+
+/********************************************************************************
+ *                      Code Part 4 - Utility Functions
  *******************************************************************************/
 
 /**
+ * 给定棋盘中的一个坐标，判断它是否是9个可以落子的位置之一
  * 
- * @param {目标位置的x坐标} x 
- * @param {目标位置的y坐标} y 
- * @param {要移动的棋子} pieceId 
- * @returns 
+ * @param {int} x, 目标位置的x坐标
+ * @param {int} y, 目标位置的y坐标
+ * @param {str} pieceId, 要移动的棋子的id
+ * @returns true or false, means valid or invalid
  */
 function validatePosition(x, y, pieceId) {
     // 获取要移动的棋子的当前位置
@@ -235,13 +279,37 @@ function resetPiecesPositions() {
     });
 }
 
+/**
+ * 检查一个移动是否合法
+ * @param {BoardCase} boardcase, BoardCase 类的对象
+ * @param {str} stone, 即 pieceId
+ * @param {int} to, 棋盘上的目标位置
+ * @returns true or false, means valid or invalid
+ */
+function validateMove(boardcase, stone, to) {
+    // 目标位置若不为空，则移动非法
+    if (boardcase.board[to] != EMPTY) {
+        return false;
+    }
+    // 起始位置若不是该棋子，则移动非法
+    let from = boardcase.stonePositions[stone];
+    if (boardcase.board[from] != stone) {
+        return false;
+    }
+    // 起始位置和目标位置之间是否有连线
+    if (!ROUTING[from].includes(to)) {
+        return false;
+    }
+    return true;
+}
+
 /******************************************************************************
- *                     Code Part 4 - GUI
+ *                     Code Part 5 - GUI
  *****************************************************************************/
 
 document.addEventListener('DOMContentLoaded', () => {
     /**
-     * Code Part 4-1:   添加棋子和棋盘的点击事件
+     * Code Part 5.1:   添加棋子和棋盘的点击事件
      */
 
     // 为每个棋子添加点击事件监听器
@@ -319,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /***************************************************************
-     *  Code Part 4-2: 按钮点击事件
+     *  Code Part 5.2: 按钮点击事件
      * *************************************************************/
 
     // 获取按钮元素
