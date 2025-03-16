@@ -232,12 +232,12 @@ function makeMove(pieceId, newPosition) {
     RED_TURN = !RED_TURN;
 }
 
-function checkWin() { // 检查是否有一方获胜
-    let redPositionList = [STONE_POSITIONS[R1], STONE_POSITIONS[R2], STONE_POSITIONS[R3]];
+function checkRedWin(stonePostions) {
+    let redPositionList = [stonePostions[R1], stonePostions[R2], stonePostions[R3]];
     redPositionList.sort();
-    let lineNum = 1  // 忽略红棋位于[0,1,2]的情况
-    for (; lineNum < LINES.length; lineNum++) {
-        let line = LINES[lineNum];
+    let lineId = 1  // 忽略红棋位于[0,1,2]的情况
+    for (; lineId < LINES.length; lineId++) {
+        let line = LINES[lineId];
         let win = true;
         for(let i=0; i<3; i++) {
             if (line[i] != redPositionList[i]) {
@@ -245,18 +245,17 @@ function checkWin() { // 检查是否有一方获胜
                 continue;
             }
         }
-        if (win) {
-            alert("红方获胜！");
-            GAME_OVER = true;
-            return;
-        }
+        if (win) return true;
     }
+    return false;
+}
 
-    let blackPositionList = [STONE_POSITIONS[B1], STONE_POSITIONS[B2], STONE_POSITIONS[B3]];
+function checkBlackWin(stonePostions) {
+    let blackPositionList = [stonePostions[B1], stonePostions[B2], stonePostions[B3]];
     blackPositionList.sort();
-    for (lineNum = 0; lineNum < LINES.length; lineNum++) {
-        if (lineNum == 2) continue;  // 忽略黑棋位于[6,7,8]的情况
-        let line = LINES[lineNum];
+    for (let lineId = 0; lineId < LINES.length; lineId++) {
+        if (lineId == 2) continue;  // 忽略黑棋位于[6,7,8]的情况
+        let line = LINES[lineId];
         let win = true;
         for(let i=0; i<3; i++) {
             if (line[i] != blackPositionList[i]) {
@@ -264,12 +263,21 @@ function checkWin() { // 检查是否有一方获胜
                 continue;
             }
         }
-        if (win) {
-            alert("黑方获胜！");
-            GAME_OVER = true;
-            return;
-        }
+        if (win) return true;
     };
+    return false;
+}
+
+function checkWin() { // 检查是否有一方获胜
+    if (checkRedWin(STONE_POSITIONS)) {
+        alert("红方获胜！");
+        GAME_OVER = true;
+        return;
+    }
+    if (checkBlackWin(STONE_POSITIONS)) {
+        alert("黑方获胜！");
+        GAME_OVER = true;
+    }
 }
 
 function resetPiecesPositions() {
@@ -318,6 +326,8 @@ function validateMove(boardcase, stone, to) {
 
 // 给出一个给定盘面下的所有走法以及对应的盘面
 function genMovesAndBoardCases(boardcase) {
+    assert(boardcase instanceof BoardCase);
+
     let movesAndBoardCases = [];
     let board = boardcase.board;
     let redTurn = boardcase.redTurn;
@@ -338,14 +348,76 @@ function genMovesAndBoardCases(boardcase) {
                 let new_stonePositions = JSON.parse(JSON.stringify(stonePositions));
                 new_stonePositions[stone] = to;
                 const new_boardcase = new BoardCase(new_board, new_stonePositions, !redTurn);
-                const new_moveAndBoardCase = new MoveAndBoardCase(new_move, new_boardcase);
-                movesAndBoardCases.push(new_moveAndBoardCase);
+                const newMoveAndBoardCase = new MoveAndBoardCase(new_move, new_boardcase);
+                movesAndBoardCases.push(newMoveAndBoardCase);
                 console.log(new_move.toString());
             }
         });
     });
     return movesAndBoardCases;
 }
+
+/**
+ * Min-Max算法
+ * @return: score:int, the score of the board case
+ * @return: move_list: A list of move sequence, including current move for current board case
+ */
+function minMax(boardcase, depth) {
+    assert(boardcase instanceof BoardCase);
+    if (checkRedWin(boardcase.stonePositions))return [MAX_SCORE, []];
+    if (checkBlackWin(boardcase.stonePositions)) return [MIN_SCORE, []];
+    if (depth === 0) return [0, []];
+
+    let best_score = 0;
+    let best_move = null;
+    let best_move_list = [];
+
+    if (boardcase.redTurn) {
+        best_score = MIN_SCORE;
+        let red_moves_and_board_cases = genMovesAndBoardCases(boardcase);
+        if (red_moves_and_board_cases.length === 0) {
+            best_score = 0;
+        }
+        for (let move_and_board_case of red_moves_and_board_cases) {
+            assert(move_and_board_case instanceof MoveAndBoardCase);
+            let curr_move = move_and_board_case.move;
+            let curr_board_case = move_and_board_case.boardcase;
+            let [curr_score, move_list] = min_max(curr_board_case, depth - 1);
+            if (curr_score > best_score || best_move === null) {
+                best_score = curr_score;
+                best_move = {...curr_move };
+                best_move_list = [...move_list];
+                if (curr_score === MAX_SCORE) {
+                    break;
+                }
+            }
+        }
+    } else { // turn to black to play
+        best_score = MAX_SCORE;
+        let black_moves_and_board_cases = genMovesAndBoardCases(boardcase);
+        if (black_moves_and_board_cases.length === 0) {
+            best_score = 0;
+        }
+        for (let move_and_board_case of black_moves_and_board_cases) {
+            assert(move_and_board_case instanceof MoveAndBoardCase);
+            let curr_move = move_and_board_case.move;
+            let curr_board_case = move_and_board_case.boardcase;
+            let [curr_score, move_list] = min_max(curr_board_case, depth - 1);
+            if (curr_score < best_score || best_move === null) {
+                best_score = curr_score;
+                best_move = {...curr_move };
+                best_move_list = [...move_list];
+                if (curr_score === MIN_SCORE) {
+                    break;
+                }
+            }
+        }
+    }
+
+    best_move_list.push(best_move);
+    return [best_score, best_move_list];
+}
+
 
 /******************************************************************************
  *                     Code Part 5 - GUI
