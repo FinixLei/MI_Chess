@@ -322,20 +322,20 @@ function validateMove(boardcase, stone, to) {
 
 // 给出一个给定盘面下的所有走法以及对应的盘面
 function genMovesAndBoardCases(boardcase) {
-    assert(boardcase instanceof BoardCase);
+    console.assert(boardcase instanceof BoardCase);
 
     let movesAndBoardCases = [];
     let board = boardcase.board;
     let redTurn = boardcase.redTurn;
     let stonePositions = boardcase.stonePositions;
 
-    forEach(stonePositions, (stone) => {
+    Object.keys(stonePositions).forEach((stone) => {
         if (redTurn && !RED_STONES.includes(stone)) return;
         if (!redTurn && !BLACK_STONES.includes(stone)) return;
 
         let from = stonePositions[stone];
         let availablePositions = ROUTING[from];
-        forEach(availablePositions, (to) => {
+        availablePositions.forEach((to) => {
             if (board[to] == EMPTY) {
                 const new_move = new Move(stone, from, to);
                 let new_board = JSON.parse(JSON.stringify(board));
@@ -359,7 +359,7 @@ function genMovesAndBoardCases(boardcase) {
  * @return: move_list: A list of move sequence, including current move for current board case
  */
 function minMax(boardcase, depth) {
-    assert(boardcase instanceof BoardCase);
+    console.assert(boardcase instanceof BoardCase);
     if (checkRedWin(boardcase.stonePositions))return [MAX_SCORE, []];
     if (checkBlackWin(boardcase.stonePositions)) return [MIN_SCORE, []];
     if (depth === 0) return [0, []];
@@ -375,7 +375,7 @@ function minMax(boardcase, depth) {
             best_score = 0;
         }
         for (let move_and_board_case of red_moves_and_board_cases) {
-            assert(move_and_board_case instanceof MoveAndBoardCase);
+            console.assert(move_and_board_case instanceof MoveAndBoardCase);
             let curr_move = move_and_board_case.move;
             let curr_board_case = move_and_board_case.boardcase;
             let [curr_score, move_list] = minMax(curr_board_case, depth-1);
@@ -395,7 +395,7 @@ function minMax(boardcase, depth) {
             best_score = 0;
         }
         for (let move_and_board_case of black_moves_and_board_cases) {
-            assert(move_and_board_case instanceof MoveAndBoardCase);
+            console.assert(move_and_board_case instanceof MoveAndBoardCase);
             let curr_move = move_and_board_case.move;
             let curr_board_case = move_and_board_case.boardcase;
             let [curr_score, move_list] = minMax(curr_board_case, depth-1);
@@ -430,7 +430,7 @@ function minMax(boardcase, depth) {
  * @returns {Array} - [stone: string, end_pos: number, score: number], or [null, -1, 0] if no available moves
  */
 function genMove(boardcase, depth = 10) {
-    assert(boardcase instanceof BoardCase);
+    console.assert(boardcase instanceof BoardCase);
     const redTurn = boardcase.redTurn;
     const least_depth = 5;
     if (depth < least_depth) depth = least_depth;
@@ -537,6 +537,34 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 checkWin();
             }, 2);
+
+            // 再次判断是否游戏结束
+            if (GAME_OVER) return;
+
+            // 如果是人机对战，且人执红，且轮到黑走，则生成一个Move并执行
+            if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
+                [stone, to, score] = genMove(new BoardCase(GUI_BOARD, STONE_POSITIONS, RED_TURN), 10);
+                if (stone == null) {
+                    alert("No available moves! Pass!");
+                    RED_TURN = !RED_TURN;
+                    return;
+                }
+                // 执行数据结构上的移动操作
+                makeMove(stone, validPositions[to]);
+
+                // 更新 HTML 上棋子的位置
+                const piece = document.getElementById(stone);
+                if (piece) {
+                    const newPosition = validPositions[to];
+                    piece.style.left = `${newPosition.x}px`;
+                    piece.style.top = `${newPosition.y}px`;
+                }
+
+                // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
+                setTimeout(() => {
+                    checkWin();
+                }, 2);
+            }
         }
     });
 
@@ -584,7 +612,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (human_human_btn.classList.contains('disabled')) {
                 human_human_btn.classList.remove('disabled');
             }
-            // 检查”人机对战(人执黑)"按钮是否为灰色，如果是则让其变亮
+            // 检查"人机对战(人执黑)"按钮是否为灰色，如果是则让其变亮
             if (human_black_btn.classList.contains('disabled')) {
                 human_black_btn.classList.remove('disabled');
             }
