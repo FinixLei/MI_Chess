@@ -8,10 +8,6 @@ const FIGHT_TYPE = {
     HUMAN_BLACK_AI_RED: 'human-black-ai-red',
     UNDEFINED: 'undefined'
 }
-const PIECE_COLOR = {
-    RED: 'Red',
-    BLACK: 'Black'
-}
 
 const ROUTING = {
     0: [1, 3, 4],
@@ -382,7 +378,7 @@ function minMax(boardcase, depth) {
             assert(move_and_board_case instanceof MoveAndBoardCase);
             let curr_move = move_and_board_case.move;
             let curr_board_case = move_and_board_case.boardcase;
-            let [curr_score, move_list] = min_max(curr_board_case, depth - 1);
+            let [curr_score, move_list] = minMax(curr_board_case, depth-1);
             if (curr_score > best_score || best_move === null) {
                 best_score = curr_score;
                 best_move = {...curr_move };
@@ -402,7 +398,7 @@ function minMax(boardcase, depth) {
             assert(move_and_board_case instanceof MoveAndBoardCase);
             let curr_move = move_and_board_case.move;
             let curr_board_case = move_and_board_case.boardcase;
-            let [curr_score, move_list] = min_max(curr_board_case, depth - 1);
+            let [curr_score, move_list] = minMax(curr_board_case, depth-1);
             if (curr_score < best_score || best_move === null) {
                 best_score = curr_score;
                 best_move = {...curr_move };
@@ -418,6 +414,48 @@ function minMax(boardcase, depth) {
     return [best_score, best_move_list];
 }
 
+/**
+ * Generate a move for the given board case
+ * Note, this function calculate the depths from 5 to the given depth
+ * If the search finds a winning move, it will return immediately
+ * Why do this? 
+ * Because when a killer move is found in depth 5 but if the search depth is 10, 
+ * several other moves are also considered as killer moves but actually they are not, 
+ * as they could waste several rounds and then execute the real killer move.
+ * This way will make the generated move is not the real killer move, so that it cannot beat the opponent.
+ * So we need to start from depth 5 and if a winning move is found, we return immediately.
+ * 
+ * @param {BoardCase} boardcase - the current board case
+ * @param {number} depth - the depth of the search, default is 10
+ * @returns {Array} - [stone: string, end_pos: number, score: number], or [null, -1, 0] if no available moves
+ */
+function genMove(boardcase, depth = 10) {
+    assert(boardcase instanceof BoardCase);
+    const redTurn = boardcase.redTurn;
+    const least_depth = 5;
+    if (depth < least_depth) depth = least_depth;
+
+    let di = least_depth;
+    let move = null;
+    let score = 0;
+    while (di <= depth) {
+        console.log(`Engine is thinking for depth = ${di}...`);
+        [score, move_list] = minMax(boardcase, di);
+        if (move_list.length === 0) {
+            return [null, -1, 0];
+        }
+
+        move = move_list[move_list.length - 1];
+        if (score === MAX_SCORE && redTurn) {
+            return [move.pieceId, move.to, score];
+        } else if (score === MIN_SCORE && !redTurn) {
+            return [move.pieceId, move.to, score];
+        } else {
+            di++;
+        }
+    }
+    return [move.pieceId, move.to, score];
+}
 
 /******************************************************************************
  *                     Code Part 5 - GUI
