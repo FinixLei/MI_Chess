@@ -147,8 +147,9 @@ class BoardCase {
 // 执行该Move实例之后，会达到boardcase所描绘的局面
 class MoveAndBoardCase {
     constructor(move, boardCase) {
+        console.assert(boardCase instanceof BoardCase);
         this.move = new Move(move.pieceId, move.from, move.to);
-        this.boardCase = new BoardCase(boardCase.board, boardCase.stonePositions, boardCase.redTurn);
+        this.boardcase = new BoardCase(boardCase.board, boardCase.stonePositions, boardCase.redTurn);
     }
 }
 
@@ -346,7 +347,6 @@ function genMovesAndBoardCases(boardcase) {
                 const new_boardcase = new BoardCase(new_board, new_stonePositions, !redTurn);
                 const newMoveAndBoardCase = new MoveAndBoardCase(new_move, new_boardcase);
                 movesAndBoardCases.push(newMoveAndBoardCase);
-                console.log(new_move.toString());
             }
         });
     });
@@ -409,7 +409,6 @@ function minMax(boardcase, depth) {
             }
         }
     }
-
     best_move_list.push(best_move);
     return [best_score, best_move_list];
 }
