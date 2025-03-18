@@ -163,7 +163,7 @@ class MoveAndBoardCase {
  * @param {int} x, 目标位置的x坐标
  * @param {int} y, 目标位置的y坐标
  * @param {str} pieceId, 要移动的棋子的id
- * @returns true or false, means valid or invalid
+ * @returns null 或者 validPosition数组中的一个元素，即一个有效位置
  */
 function validatePosition(x, y, pieceId) {
     // 获取要移动的棋子的当前位置
@@ -266,6 +266,8 @@ function checkBlackWin(stonePostions) {
 }
 
 function checkWin() { // 检查是否有一方获胜
+    if (GAME_OVER) return;
+
     if (checkRedWin(STONE_POSITIONS)) {
         alert("红方获胜！");
         GAME_OVER = true;
@@ -460,6 +462,31 @@ function genMove(boardcase, depth = 10) {
  *                     Code Part 5 - GUI
  *****************************************************************************/
 
+function engineDoMove() {
+    console.log("Current Red Turn is ", RED_TURN);
+    [stone, to, score] = genMove(new BoardCase(GUI_BOARD, STONE_POSITIONS, RED_TURN), 10);
+    if (stone == null) {
+        alert("No available moves! Pass!");
+        RED_TURN = !RED_TURN;
+        return;
+    }
+    // 执行数据结构上的移动操作
+    makeMove(stone, validPositions[to]);
+
+    // 更新 HTML 上棋子的位置
+    const piece = document.getElementById(stone);
+    if (piece) {
+        const newPosition = validPositions[to];
+        piece.style.left = `${newPosition.x}px`;
+        piece.style.top = `${newPosition.y}px`;
+    }
+
+    // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
+    setTimeout(() => {
+        checkWin();
+    }, 1);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     /**
      * Code Part 5.1:   添加棋子和棋盘的点击事件
@@ -518,52 +545,35 @@ document.addEventListener('DOMContentLoaded', () => {
         let y = event.clientY - rect.top - selectedPiece.offsetHeight / 2;
 
         var newPosition = validatePosition(x, y, pieceId)
-        if (newPosition == null) {
-            return;
+        if (newPosition == null) return;
+
+        makeMove(selectedPiece.id, newPosition);
+
+        // 设置选中棋子的新位置
+        selectedPiece.style.left = `${newPosition.x}px`;
+        selectedPiece.style.top = `${newPosition.y}px`;
+        // 恢复选中棋子的大小
+        selectedPiece.style.transform = 'scale(1)';
+        // 取消选中状态
+        selectedPiece = null;
+
+        // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
+        setTimeout(() => {
+            checkWin();
+        }, 1);
+
+        // 再次判断是否游戏结束
+        if (GAME_OVER) return;
+
+        console.log("Fight Type: " + CURR_FIGHT_TYPE + ", Red Turn: " + RED_TURN);
+
+        // 如果是人机对战，且人执红，且轮到黑走，则生成一个Move并执行
+        if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
+            engineDoMove();
         }
-        else {
-            makeMove(selectedPiece.id, newPosition);
-
-            // 设置选中棋子的新位置
-            selectedPiece.style.left = `${newPosition.x}px`;
-            selectedPiece.style.top = `${newPosition.y}px`;
-            // 恢复选中棋子的大小
-            selectedPiece.style.transform = 'scale(1)';
-            // 取消选中状态
-            selectedPiece = null;
-            
-            // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
-            setTimeout(() => {
-                checkWin();
-            }, 2);
-
-            // 再次判断是否游戏结束
-            if (GAME_OVER) return;
-
-            // 如果是人机对战，且人执红，且轮到黑走，则生成一个Move并执行
-            if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
-                [stone, to, score] = genMove(new BoardCase(GUI_BOARD, STONE_POSITIONS, RED_TURN), 10);
-                if (stone == null) {
-                    alert("No available moves! Pass!");
-                    RED_TURN = !RED_TURN;
-                    return;
-                }
-                // 执行数据结构上的移动操作
-                makeMove(stone, validPositions[to]);
-
-                // 更新 HTML 上棋子的位置
-                const piece = document.getElementById(stone);
-                if (piece) {
-                    const newPosition = validPositions[to];
-                    piece.style.left = `${newPosition.x}px`;
-                    piece.style.top = `${newPosition.y}px`;
-                }
-
-                // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
-                setTimeout(() => {
-                    checkWin();
-                }, 2);
-            }
+        else if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_BLACK_AI_RED && RED_TURN) {
+            // 若是人机对战，且人执黑，且轮到红走，则生成一个Move并执行
+            engineDoMove();
         }
     });
 
@@ -638,6 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (human_red_btn.classList.contains('disabled')) {
                 human_red_btn.classList.remove('disabled');
             }
+            engineDoMove();
 
         }
         else {
