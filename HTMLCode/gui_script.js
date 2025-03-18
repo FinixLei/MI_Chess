@@ -2,6 +2,10 @@
  *          Code Part 1 - Constants
  **************************************************/
 
+const moveSound = new Audio('./resource/stone.mp3');
+const move2Sound = new Audio('./resource/stone.mp3');
+const winSound = new Audio('./resource/win.mp3');
+
 const FIGHT_TYPE = {
     HUMAN_HUMAN: 'human-human',
     HUMAN_RED_AI_BLACK: 'human-red-ai-black',
@@ -271,11 +275,13 @@ function checkWin() { // 检查是否有一方获胜
     if (checkRedWin(STONE_POSITIONS)) {
         appendToTextZone("红方获胜!");
         GAME_OVER = true;
+        winSound.play();
         return;
     }
     if (checkBlackWin(STONE_POSITIONS)) {
         appendToTextZone("黑方获胜!");
         GAME_OVER = true;
+        winSound.play();
     }
 }
 
@@ -480,6 +486,7 @@ function engineDoMove() {
         piece.style.left = `${newPosition.x}px`;
         piece.style.top = `${newPosition.y}px`;
     }
+    // 检查游戏是否结束
     checkWin();
 }
 
@@ -568,22 +575,25 @@ document.addEventListener('DOMContentLoaded', () => {
         // 取消选中状态
         selectedPiece = null;
 
-        // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
+        moveSound.play();
+
         setTimeout(() => {
+            // 检查游戏是否结束
             checkWin();
 
             // 再次判断是否游戏结束
             if (GAME_OVER) return;
-
             // 如果是人机对战，且人执红，且轮到黑走，则生成一个Move并执行
             if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
                 engineDoMove();
+                if (!GAME_OVER) move2Sound.play();
             }
             else if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_BLACK_AI_RED && RED_TURN) {
                 // 若是人机对战，且人执黑，且轮到红走，则生成一个Move并执行
                 engineDoMove();
+                if (!GAME_OVER) move2Sound.play();
             }
-        }, 1);
+        }, 100);
     });
 
     /***************************************************************
@@ -667,10 +677,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // 刷新文字显示区域的内容
             writeTextZone('人机对战! 人执黑!');
 
-            // 设置引擎执红，生成一个Move并执行, 延时以先显示文字
             setTimeout(() => {
+                // 设置引擎执红，生成一个Move并执行
                 engineDoMove();
-            }, 1);
+                move2Sound.play();
+            }, 100);
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
