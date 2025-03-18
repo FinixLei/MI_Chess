@@ -14,17 +14,26 @@ body {
     align-items: center; /* 水平居中对齐 */
 }
 
+.board-and-text {
+    display: flex;
+    flex-direction: row; /* 水平排列 */
+    align-items: center; /* 垂直居中对齐 */
+}
+
 .board {
     margin-bottom: 20px; /* 给棋盘下方添加一些间距 */
     position: relative;
     width: 270px; /* 根据棋盘图片的尺寸调整 */
     height: 270px; /* 根据棋盘图片的尺寸调整 */
+    margin-right: 20px; /* 给棋盘右侧添加间距 */
 }
+
 .board-image {
     width: 100%;
     height: 100%;
     /*object-fit: cover; */ /* 或者使用 'contain' 根据需求选择 */
 }
+
 .pieces {
     position: absolute;
     top: 0;
@@ -32,6 +41,7 @@ body {
     width: 100%;
     height: 100%;
 }
+
 .piece {
     position: absolute;
     width: 35px; /* 根据棋子图片的尺寸调整 */
@@ -40,35 +50,51 @@ body {
     cursor: pointer;
     transition: transform 0.2s;
 }
+
 .piece.red {
     background-color: red;
 }
+
 .piece.black {
     background-color: black;
 }
+
 /* 第一排红子位置 */
 .piece.red:nth-child(1) {
     top: 2%;
     left: 2%;
 }
+
 .piece.red:nth-child(2) {
     top: 2%;
     left: 43%;
 }
+
 .piece.red:nth-child(3) {
     top: 2%;
     left: 84%;
 }
+
 /* 第三排黑子位置 */
 .piece.black:nth-child(4) {
     top: 88%;
     left: 2%;
 }
+
 .piece.black:nth-child(5) {
     top: 88%;
     left: 43%;
 }
+
 .piece.black:nth-child(6) {
     top: 88%;
     left: 84%;
+}
+
+.text-display {
+    width: 200px; /* 设置文字显示区域的宽度 */
+    height: 270px; /* 设置文字显示区域的高度 */
+    background-color: #fff; /* 设置背景颜色 */
+    border: 1px solid #ccc; /* 设置边框 */
+    padding: 10px; /* 设置内边距 */
 }

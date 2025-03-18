@@ -33,22 +33,26 @@
 <body>
     <!-- 新增一个容器来包裹棋盘和按钮 -->
     <div class="game-container">
-        <div class="board">
-            <!-- 棋盘图片 -->
-            <img src="resource/board.png" alt="棋盘" class="board-image">
-            <!-- 棋子容器 -->
-            <div class="pieces">
-                <!-- 第一排三个红子 -->
-                <div id="R1" class="piece red" data-piece="red"></div>
-                <div id="R2" class="piece red" data-piece="red"></div>
-                <div id="R3" class="piece red" data-piece="red"></div>
-                <!-- 第三排三个黑子 -->
-                <div id="B1" class="piece black" data-piece="black"></div>
-                <div id="B2" class="piece black" data-piece="black"></div>
-                <div id="B3" class="piece black" data-piece="black"></div>
+        <div class="board-and-text">
+            <div class="board">
+                <!-- 棋盘图片 -->
+                <img src="resource/board.png" alt="棋盘" class="board-image">
+                <!-- 棋子容器 -->
+                <div class="pieces">
+                    <!-- 第一排三个红子 -->
+                    <div id="R1" class="piece red" data-piece="red"></div>
+                    <div id="R2" class="piece red" data-piece="red"></div>
+                    <div id="R3" class="piece red" data-piece="red"></div>
+                    <!-- 第三排三个黑子 -->
+                    <div id="B1" class="piece black" data-piece="black"></div>
+                    <div id="B2" class="piece black" data-piece="black"></div>
+                    <div id="B3" class="piece black" data-piece="black"></div>
+                </div>
+            </div>
+            <div id="text-zone" class="text-display">
+                <!-- 这里可以放置要显示的文字 -->
             </div>
         </div>
-        
         <!-- 按钮容器 -->
         <div class="button-container">
             <button id="human-human-button">人人对战</button>

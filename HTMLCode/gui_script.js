@@ -269,12 +269,12 @@ function checkWin() { // 检查是否有一方获胜
     if (GAME_OVER) return;
 
     if (checkRedWin(STONE_POSITIONS)) {
-        alert("红方获胜！");
+        appendToTextZone("红方获胜!");
         GAME_OVER = true;
         return;
     }
     if (checkBlackWin(STONE_POSITIONS)) {
-        alert("黑方获胜！");
+        appendToTextZone("黑方获胜!");
         GAME_OVER = true;
     }
 }
@@ -433,7 +433,7 @@ function minMax(boardcase, depth) {
 function genMove(boardcase, depth = 10) {
     console.assert(boardcase instanceof BoardCase);
     const redTurn = boardcase.redTurn;
-    const least_depth = 5;
+    const least_depth = 3;
     if (depth < least_depth) depth = least_depth;
 
     let di = least_depth;
@@ -441,6 +441,7 @@ function genMove(boardcase, depth = 10) {
     let score = 0;
     while (di <= depth) {
         console.log(`Engine is thinking for depth = ${di}...`);
+        // appendToTextZone(`AI正在思考第${di}层...`);
         [score, move_list] = minMax(boardcase, di);
         if (move_list.length === 0) {
             return [null, -1, 0];
@@ -463,7 +464,6 @@ function genMove(boardcase, depth = 10) {
  *****************************************************************************/
 
 function engineDoMove() {
-    console.log("Current Red Turn is ", RED_TURN);
     [stone, to, score] = genMove(new BoardCase(GUI_BOARD, STONE_POSITIONS, RED_TURN), 10);
     if (stone == null) {
         alert("No available moves! Pass!");
@@ -480,11 +480,22 @@ function engineDoMove() {
         piece.style.left = `${newPosition.x}px`;
         piece.style.top = `${newPosition.y}px`;
     }
+    checkWin();
+}
 
-    // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
-    setTimeout(() => {
-        checkWin();
-    }, 1);
+function writeTextZone(text) {
+    const textZone = document.getElementById('text-zone');
+    const paragraph = document.createElement('p');
+    paragraph.textContent = text;
+    textZone.textContent = '';
+    textZone.appendChild(paragraph);
+}
+
+function appendToTextZone(text) {
+    const textZone = document.getElementById('text-zone');
+    const paragraph = document.createElement('p');
+    paragraph.textContent = text;
+    textZone.appendChild(paragraph);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -579,6 +590,9 @@ document.addEventListener('DOMContentLoaded', () => {
      *  Code Part 5.2: 按钮点击事件
      * *************************************************************/
 
+    // 获取文字显示区域的元素
+    const textDisplay = document.getElementById('text-zone');
+
     // 获取按钮元素
     const human_human_btn = document.getElementById('human-human-button');
     const human_red_btn   = document.getElementById('human-red-ai-black-button');
@@ -600,11 +614,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (human_black_btn.classList.contains('disabled')) {
                 human_black_btn.classList.remove('disabled');
             }
+            // 刷新文字显示区域的内容
+            writeTextZone('人人对战!');
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+            writeTextZone('');
         }
-        console.log("Current Fight Type is ", CURR_FIGHT_TYPE);
     });
 
     // 为 human-red-button 添加点击事件监听器
@@ -623,11 +639,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (human_black_btn.classList.contains('disabled')) {
                 human_black_btn.classList.remove('disabled');
             }
+            // 刷新文字显示区域的内容
+            writeTextZone('人机对战! 人执红!');
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+            writeTextZone('');
         }
-        console.log("Current Fight Type is ", CURR_FIGHT_TYPE);
     });
 
     // 为 human-black-button 添加点击事件监听器
@@ -646,11 +664,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (human_red_btn.classList.contains('disabled')) {
                 human_red_btn.classList.remove('disabled');
             }
-            engineDoMove();
+            // 刷新文字显示区域的内容
+            writeTextZone('人机对战! 人执黑!');
+
+            // 设置引擎执红，生成一个Move并执行, 延时以先显示文字
+            setTimeout(() => {
+                engineDoMove();
+            }, 1);
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+            writeTextZone('');
         }
-        console.log("Current Fight Type is ", CURR_FIGHT_TYPE);
+        
     });
 });
