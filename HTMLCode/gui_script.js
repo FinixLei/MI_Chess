@@ -560,21 +560,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // 使用 setTimeout 确保在浏览器渲染后再检查游戏是否结束
         setTimeout(() => {
             checkWin();
+
+            // 再次判断是否游戏结束
+            if (GAME_OVER) return;
+
+            // 如果是人机对战，且人执红，且轮到黑走，则生成一个Move并执行
+            if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
+                engineDoMove();
+            }
+            else if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_BLACK_AI_RED && RED_TURN) {
+                // 若是人机对战，且人执黑，且轮到红走，则生成一个Move并执行
+                engineDoMove();
+            }
         }, 1);
-
-        // 再次判断是否游戏结束
-        if (GAME_OVER) return;
-
-        console.log("Fight Type: " + CURR_FIGHT_TYPE + ", Red Turn: " + RED_TURN);
-
-        // 如果是人机对战，且人执红，且轮到黑走，则生成一个Move并执行
-        if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
-            engineDoMove();
-        }
-        else if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_BLACK_AI_RED && RED_TURN) {
-            // 若是人机对战，且人执黑，且轮到红走，则生成一个Move并执行
-            engineDoMove();
-        }
     });
 
     /***************************************************************
@@ -649,7 +647,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 human_red_btn.classList.remove('disabled');
             }
             engineDoMove();
-
         }
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
