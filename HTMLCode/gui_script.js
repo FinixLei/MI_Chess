@@ -100,6 +100,8 @@ let RED_TURN = true  // 开局红棋先走
 let CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
 let GAME_OVER = false  // 游戏是否结束
 
+let HISTORICAL_BOARDCASES = [];
+
 /********************************************************************************
  *                      Code Part 3 - Class definitions
  *******************************************************************************/
@@ -283,6 +285,23 @@ function checkWin() { // 检查是否有一方获胜
         GAME_OVER = true;
         winSound.play();
     }
+
+    // 检查是否平局
+    if (HISTORICAL_BOARDCASES.length >= 5) {
+        let lastBoardcase = HISTORICAL_BOARDCASES[HISTORICAL_BOARDCASES.length - 1];
+        let count = 0;
+        for (let i = 0; i < HISTORICAL_BOARDCASES.length - 1; i++) {
+            if (lastBoardcase.isEqual(HISTORICAL_BOARDCASES[i])) {
+                count += 1;
+                if (count >= 4) {
+                    appendToTextZone("同样局面出现5次。平局!");
+                    GAME_OVER = true;
+                    winSound.play();
+                    break;
+                }
+            }
+        }
+    }
 }
 
 function resetPiecesPositions() {
@@ -290,6 +309,7 @@ function resetPiecesPositions() {
     GUI_BOARD = JSON.parse(JSON.stringify(INIT_BOARD))
     STONE_POSITIONS = JSON.parse(JSON.stringify(STONE_INIT_POSITIONS))
     RED_TURN = true;
+    HISTORICAL_BOARDCASES = [];
 
     // 重置棋子的位置
     const pieces = document.querySelectorAll('.piece');
@@ -486,6 +506,10 @@ function engineDoMove() {
         piece.style.left = `${newPosition.x}px`;
         piece.style.top = `${newPosition.y}px`;
     }
+
+    // 生成当前局面的 BoardCase 实例， 并记录到历史招法中
+    HISTORICAL_BOARDCASES.push(new BoardCase(GUI_BOARD, STONE_POSITIONS, RED_TURN));
+
     // 检查游戏是否结束
     checkWin();
 }
@@ -566,6 +590,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (newPosition == null) return;
 
         makeMove(selectedPiece.id, newPosition);
+
+        // 生成当前局面的 BoardCase 实例， 并记录到历史招法中
+        HISTORICAL_BOARDCASES.push(new BoardCase(GUI_BOARD, STONE_POSITIONS, RED_TURN));
 
         // 设置选中棋子的新位置
         selectedPiece.style.left = `${newPosition.x}px`;
