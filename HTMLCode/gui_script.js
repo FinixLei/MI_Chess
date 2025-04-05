@@ -325,30 +325,6 @@ function resetPiecesPositions() {
     });
 }
 
-/**
- * 检查一个移动是否合法
- * @param {BoardCase} boardcase, BoardCase 类的对象
- * @param {str} stone, 即 pieceId
- * @param {int} to, 棋盘上的目标位置
- * @returns {true or false}, means valid or invalid
- */
-function validateMove(boardcase, stone, to) {
-    // 目标位置若不为空，则移动非法
-    if (boardcase.board[to] != EMPTY) {
-        return false;
-    }
-    // 起始位置若不是该棋子，则移动非法
-    let from = boardcase.stonePositions[stone];
-    if (boardcase.board[from] != stone) {
-        return false;
-    }
-    // 起始位置和目标位置之间是否有连线
-    if (!ROUTING[from].includes(to)) {
-        return false;
-    }
-    return true;
-}
-
 // 给出一个给定盘面下的所有走法以及对应的盘面
 function genMovesAndBoardCases(boardcase) {
     console.assert(boardcase instanceof BoardCase);
