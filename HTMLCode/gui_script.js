@@ -652,6 +652,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
             writeTextZone('');
+            resetPiecesPositions();
         }
     });
 
@@ -677,6 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
             writeTextZone('');
+            resetPiecesPositions();
         }
     });
 
@@ -708,6 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else {
             CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
             writeTextZone('');
+            resetPiecesPositions();
         }
         
     });
