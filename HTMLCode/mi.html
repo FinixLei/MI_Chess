@@ -49,15 +49,22 @@
                     <div id="B3" class="piece black" data-piece="black"></div>
                 </div>
             </div>
-            <div id="text-zone" class="text-display">
-                <!-- 这里可以放置要显示的文字 -->
+            <!-- 按钮容器 -->
+            <div class="button-container">
+                <button id="human-human-button">人人对战</button>
+                <button id="human-red-ai-black-button">人机对战(人执红)</button>
+                <button id="ai-red-human-black-button">人机对战(人执黑)</button>
+                <select id="difficulty-select">
+                    <option value="6">当前难度: 新手</option>
+                    <option value="8">当前难度: 高手</option>
+                    <option value="10">当前难度: 大师</option>
+                </select>
+                <!-- 添加规则介绍按钮 -->
+                <button id="rule-intro-button">规则介绍</button>
             </div>
         </div>
-        <!-- 按钮容器 -->
-        <div class="button-container">
-            <button id="human-human-button">人人对战</button>
-            <button id="human-red-ai-black-button">人机对战(人执红)</button>
-            <button id="ai-red-human-black-button">人机对战(人执黑)</button>
+        <div id="text-zone" class="text-display">
+            <!-- 这里可以放置要显示的文字 -->
         </div>
         <script src="gui_script.js"></script>
     </div>

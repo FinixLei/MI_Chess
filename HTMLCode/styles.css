@@ -92,9 +92,23 @@ body {
 }
 
 .text-display {
-    width: 200px; /* 设置文字显示区域的宽度 */
-    height: 270px; /* 设置文字显示区域的高度 */
+    width: 500px; /* 设置文字显示区域的宽度 */
+    height: 100px; /* 设置文字显示区域的高度 */
     background-color: #fff; /* 设置背景颜色 */
     border: 1px solid #ccc; /* 设置边框 */
     padding: 10px; /* 设置内边距 */
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column; /* 设置为垂直布局 */
+    gap: 10px; /* 给按钮之间添加间距 */
+}
+
+
+/* 定义下拉框样式 */
+select {
+    height: 40px; /* 设置下拉框高度 */
+    padding: 5px 10px; /* 设置内边距 */
+    font-size: 16px; /* 设置字体大小 */
 }

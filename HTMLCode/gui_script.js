@@ -93,6 +93,9 @@ const BOARD_HEIGHT = 270
  * 5. GAME_OVER: whether the game is over
  ********************************************************************************/
 
+// 初始化 CALCULATE_DEPTH 为 10
+let CALCULATE_DEPTH = 10
+
 let GUI_BOARD = JSON.parse(JSON.stringify(INIT_BOARD))
 let STONE_POSITIONS = JSON.parse(JSON.stringify(STONE_INIT_POSITIONS))
 let RED_TURN = true  // 开局红棋先走
@@ -466,7 +469,7 @@ function genMove(boardcase, depth = 10) {
  *****************************************************************************/
 
 function engineDoMove() {
-    [stone, to, score] = genMove(new BoardCase(GUI_BOARD, STONE_POSITIONS, RED_TURN), 10);
+    [stone, to, score] = genMove(new BoardCase(GUI_BOARD, STONE_POSITIONS, RED_TURN), CALCULATE_DEPTH);
     if (stone == null) {
         alert("No available moves! Pass!");
         RED_TURN = !RED_TURN;
@@ -503,6 +506,14 @@ function appendToTextZone(text) {
     const paragraph = document.createElement('p');
     paragraph.textContent = text;
     textZone.appendChild(paragraph);
+}
+
+function displayRule() {
+    const textZone = document.getElementById('text-zone');
+    textZone.innerHTML = `棋盘由三行三列共9个交叉点组成。红黑各占第一和第三排。红棋先行。
+        一次只能移动一个棋子到相邻的空位置，不能跳过棋子落子。
+        若同色棋子在同一条直线上，如同行、同列或同一条对角线上，则获胜。
+        但初始位置的直线不算。只有无子可动时，才能pass，否则必须走棋。`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -606,6 +617,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 获取文字显示区域的元素
     const textDisplay = document.getElementById('text-zone');
 
+    // 获取规则介绍按钮元素
+    const ruleIntroButton = document.getElementById('rule-intro-button');
+
+    // 为规则介绍按钮添加点击事件监听器
+    ruleIntroButton.addEventListener('click', function() {
+        displayRule();
+    });
+
     // 获取按钮元素
     const human_human_btn = document.getElementById('human-human-button');
     const human_red_btn   = document.getElementById('human-red-ai-black-button');
@@ -692,4 +711,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
     });
+});
+
+// 获取下拉框元素
+const difficultySelect = document.getElementById('difficulty-select');
+
+// 为下拉框添加 change 事件监听器
+difficultySelect.addEventListener('change', function() {
+    // 根据选择的值更新 CALCULATE_DEPTH
+    CALCULATE_DEPTH = parseInt(this.value);
 });
