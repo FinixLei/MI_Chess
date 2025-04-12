@@ -79,8 +79,7 @@ const validPositions = [
 ];
 
 const PIECE_RADIUS = 17.5
-const BOARD_WIDTH = 270
-const BOARD_HEIGHT = 270
+const TIMES_FOR_DRAW = 3
 
 /********************************************************************************
  *                      Code Part 2 - Global Variables
@@ -282,14 +281,14 @@ function checkWin() { // 检查是否有一方获胜
     }
 
     // 检查是否平局
-    if (HISTORICAL_BOARDCASES.length >= 5) {
+    if (HISTORICAL_BOARDCASES.length >= TIMES_FOR_DRAW) {
         let lastBoardcase = HISTORICAL_BOARDCASES[HISTORICAL_BOARDCASES.length - 1];
         let count = 0;
         for (let i = 0; i < HISTORICAL_BOARDCASES.length - 1; i++) {
             if (lastBoardcase.isEqual(HISTORICAL_BOARDCASES[i])) {
                 count += 1;
-                if (count >= 4) {
-                    appendToTextZone("同样局面出现5次。平局!");
+                if (count >= TIMES_FOR_DRAW) {
+                    writeTextZone(`同样局面出现${TIMES_FOR_DRAW}次。平局!`);
                     GAME_OVER = true;
                     winSound.play();
                     break;
@@ -444,7 +443,6 @@ function genMove(boardcase, depth = 10) {
     let score = 0;
     while (di <= depth) {
         console.log(`Engine is thinking for depth = ${di}...`);
-        // appendToTextZone(`AI正在思考第${di}层...`);
         [score, move_list] = minMax(boardcase, di);
         if (move_list.length === 0) {
             return [null, -1, 0];
@@ -521,7 +519,7 @@ function displayRule() {
     textZone.innerHTML = `棋盘由三行三列共9个交叉点组成。红黑各占第一和第三排。红棋先行。
         一次只能移动一个棋子到相邻的空位置，不能跳过棋子落子。
         若同色棋子在同一条直线上，如同行、同列或同一条对角线上，则获胜。
-        但初始位置的直线不算。`;
+        但初始位置的直线不算。同样的局面出现3次则为平局。`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
