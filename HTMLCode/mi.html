@@ -27,6 +27,12 @@
         .button-container {
             display: flex;
         }
+
+        /* 修改棋子过渡效果，将持续时间设置为 200ms */
+        .piece {
+            position: absolute;
+            transition: left 0.1s ease, top 0.1s ease;
+        }
     </style>
 </head>
 
@@ -55,7 +61,7 @@
                 <button id="human-red-ai-black-button">人机对战(人执红)</button>
                 <button id="ai-red-human-black-button">人机对战(人执黑)</button>
                 <select id="difficulty-select">
-                    <option value="6">当前难度: 新手</option>
+                    <option value="6" selected>当前难度: 新手</option>
                     <option value="8">当前难度: 高手</option>
                     <option value="10">当前难度: 大师</option>
                 </select>

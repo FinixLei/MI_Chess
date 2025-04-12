@@ -84,17 +84,9 @@ const BOARD_HEIGHT = 270
 
 /********************************************************************************
  *                      Code Part 2 - Global Variables
- * Always maintain 3 variables
- * When GUI_BOARD changes, the other two must be changed accordingly
- * 1. GUI_BOARD: the board in GUI_BOARD
- * 2. STONE_POSITIONS: the positions of all the stones in GUI_BOARD
- * 3. RED_TURN: whether it is red's turn
- * 4. CURRR_FIGHT_TYPE: the type of the current fight
- * 5. GAME_OVER: whether the game is over
  ********************************************************************************/
 
-// 初始化 CALCULATE_DEPTH 为 10
-let CALCULATE_DEPTH = 10
+let CALCULATE_DEPTH = 6
 
 let GUI_BOARD = JSON.parse(JSON.stringify(INIT_BOARD))
 let STONE_POSITIONS = JSON.parse(JSON.stringify(STONE_INIT_POSITIONS))
@@ -278,13 +270,13 @@ function checkWin() { // 检查是否有一方获胜
     if (GAME_OVER) return;
 
     if (checkRedWin(STONE_POSITIONS)) {
-        appendToTextZone("红方获胜!");
+        writeTextZone("红方获胜!");
         GAME_OVER = true;
         winSound.play();
         return;
     }
     if (checkBlackWin(STONE_POSITIONS)) {
-        appendToTextZone("黑方获胜!");
+        writeTextZone("黑方获胜!");
         GAME_OVER = true;
         winSound.play();
     }
@@ -305,6 +297,12 @@ function checkWin() { // 检查是否有一方获胜
             }
         }
     }
+}
+
+function resetAll() {
+    CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+    writeTextZone("");
+    resetPiecesPositions();
 }
 
 function resetPiecesPositions() {
@@ -491,6 +489,16 @@ function engineDoMove() {
 
     // 检查游戏是否结束
     checkWin();
+
+    // 播放音效
+    if (!GAME_OVER) {
+        move2Sound.play();
+        if (RED_TURN) {
+            writeTextZone("请红方走棋")
+        } else {
+            writeTextZone("请黑方走棋")
+        }
+    }
 }
 
 function writeTextZone(text) {
@@ -584,6 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 设置选中棋子的新位置
         selectedPiece.style.left = `${newPosition.x}px`;
         selectedPiece.style.top = `${newPosition.y}px`;
+
         // 恢复选中棋子的大小
         selectedPiece.style.transform = 'scale(1)';
         // 取消选中状态
@@ -594,18 +603,23 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             // 检查游戏是否结束
             checkWin();
-
-            // 再次判断是否游戏结束
             if (GAME_OVER) return;
+
             // 如果是人机对战，且人执红，且轮到黑走，则生成一个Move并执行
             if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
-                engineDoMove();
-                if (!GAME_OVER) move2Sound.play();
+                writeTextZone("AI正在思考...");
+                setTimeout(() => {
+                    engineDoMove();
+                }, 100);
+                
             }
+            // 若是人机对战，且人执黑，且轮到红走，则生成一个Move并执行
             else if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_BLACK_AI_RED && RED_TURN) {
-                // 若是人机对战，且人执黑，且轮到红走，则生成一个Move并执行
-                engineDoMove();
-                if (!GAME_OVER) move2Sound.play();
+                writeTextZone("AI正在思考...");
+                setTimeout(() => {
+                    engineDoMove();
+                }, 100);
+                
             }
         }, 100);
     });
@@ -650,9 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
             writeTextZone('人人对战!');
         }
         else {
-            CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
-            writeTextZone('');
-            resetPiecesPositions();
+            resetAll();
         }
     });
 
@@ -676,9 +688,7 @@ document.addEventListener('DOMContentLoaded', () => {
             writeTextZone('人机对战! 人执红!');
         }
         else {
-            CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
-            writeTextZone('');
-            resetPiecesPositions();
+            resetAll();
         }
     });
 
@@ -702,15 +712,15 @@ document.addEventListener('DOMContentLoaded', () => {
             writeTextZone('人机对战! 人执黑!');
 
             setTimeout(() => {
-                // 设置引擎执红，生成一个Move并执行
-                engineDoMove();
-                move2Sound.play();
+                writeTextZone("AI正在思考...");
+                setTimeout(() => {
+                    engineDoMove();
+                }, 100);
+                
             }, 100);
         }
         else {
-            CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
-            writeTextZone('');
-            resetPiecesPositions();
+            resetAll();
         }
         
     });
