@@ -605,8 +605,15 @@ document.addEventListener('DOMContentLoaded', () => {
             checkWin();
             if (GAME_OVER) return;
 
+            if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_HUMAN) {
+                if (RED_TURN) {
+                    writeTextZone("请红方走棋")
+                } else {
+                    writeTextZone("请黑方走棋")
+                }
+            }
             // 如果是人机对战，且人执红，且轮到黑走，则生成一个Move并执行
-            if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
+            else if (CURR_FIGHT_TYPE == FIGHT_TYPE.HUMAN_RED_AI_BLACK && !RED_TURN) {
                 writeTextZone("AI正在思考...");
                 setTimeout(() => {
                     engineDoMove();
