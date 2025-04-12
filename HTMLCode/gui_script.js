@@ -521,7 +521,7 @@ function displayRule() {
     textZone.innerHTML = `棋盘由三行三列共9个交叉点组成。红黑各占第一和第三排。红棋先行。
         一次只能移动一个棋子到相邻的空位置，不能跳过棋子落子。
         若同色棋子在同一条直线上，如同行、同列或同一条对角线上，则获胜。
-        但初始位置的直线不算。只有无子可动时，才能pass，否则必须走棋。`;
+        但初始位置的直线不算。`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
