@@ -96,6 +96,8 @@ let GAME_OVER = false  // 游戏是否结束
 
 let HISTORICAL_BOARDCASES = [];
 
+let selectedPiece = null; // 记录当前选中的棋子
+
 /********************************************************************************
  *                      Code Part 3 - Class definitions
  *******************************************************************************/
@@ -298,11 +300,16 @@ function checkWin() { // 检查是否有一方获胜
     }
 }
 
-function resetAll() {
-    CURR_FIGHT_TYPE = FIGHT_TYPE.UNDEFINED;
+function resetAll(currMode) {
+    CURR_FIGHT_TYPE = currMode;
     writeTextZone("");
+    if (selectedPiece != null) {
+        selectedPiece.style.transform = 'scale(1)';
+        selectedPiece = null;
+    }
     resetPiecesPositions();
 }
+
 
 function resetPiecesPositions() {
     GAME_OVER = false;
@@ -530,7 +537,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 为每个棋子添加点击事件监听器
     const pieces = document.querySelectorAll('.piece');
     const board = document.querySelector('.board');
-    let selectedPiece = null;
+    selectedPiece = null;  // 全局变量
 
     // 为每个棋子添加点击事件监听器
     pieces.forEach(piece => {
@@ -554,6 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (selectedPiece == piece) { // 若点击的棋子是自己
                 // 取消选中状态
+                selectedPiece.style.transform ='scale(1)';
                 selectedPiece = null;
             } 
             else {
@@ -655,8 +663,8 @@ document.addEventListener('DOMContentLoaded', () => {
         this.classList.toggle('disabled');
 
         if (this.classList.contains('disabled')) {
-            CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_HUMAN;
-            resetPiecesPositions();
+            resetAll(FIGHT_TYPE.HUMAN_HUMAN);
+
             // 检查”人机对战(人执红)"按钮是否为灰色，如果是则让其变亮
             if (human_red_btn.classList.contains('disabled')) {
                 human_red_btn.classList.remove('disabled');
@@ -669,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
             writeTextZone('人人对战!');
         }
         else {
-            resetAll();
+            resetAll(FIGHT_TYPE.UNDEFINED);
         }
     });
 
@@ -679,8 +687,8 @@ document.addEventListener('DOMContentLoaded', () => {
         this.classList.toggle('disabled');
 
         if (this.classList.contains('disabled')) {
-            CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_RED_AI_BLACK;
-            resetPiecesPositions();
+            resetAll(FIGHT_TYPE.HUMAN_RED_AI_BLACK);
+
             // 检查人人对战按钮是否为灰色，如果是则让其变亮
             if (human_human_btn.classList.contains('disabled')) {
                 human_human_btn.classList.remove('disabled');
@@ -693,7 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
             writeTextZone('人机对战! 人执红!');
         }
         else {
-            resetAll();
+            resetAll(FIGHT_TYPE.UNDEFINED);
         }
     });
 
@@ -703,8 +711,8 @@ document.addEventListener('DOMContentLoaded', () => {
         this.classList.toggle('disabled');
 
         if (this.classList.contains('disabled')) {
-            CURR_FIGHT_TYPE = FIGHT_TYPE.HUMAN_BLACK_AI_RED;
-            resetPiecesPositions();
+            resetAll(FIGHT_TYPE.HUMAN_BLACK_AI_RED);
+            
             // 检查人人对战按钮是否为灰色，如果是则让其变亮
             if (human_human_btn.classList.contains('disabled')) {
                 human_human_btn.classList.remove('disabled');
@@ -725,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 100);
         }
         else {
-            resetAll();
+            resetAll(FIGHT_TYPE.UNDEFINED);
         }
         
     });
